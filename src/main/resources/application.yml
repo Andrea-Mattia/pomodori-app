@@ -1,0 +1,17 @@
+spring:
+  config:
+   import: optional:file:application-secret.yml
+  application:
+    name: pomodori
+  datasource:
+    url: jdbc:postgresql://dpg-d181boogjchc73f97e50-a.frankfurt-postgres.render.com:5432/pomodori_db
+    username: pomodori_db_user
+    password: hsbzJyQsC7JcbhzpmOw54g7tPcColcVu
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
