@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: pomodori-app
+    env: docker
+    plan: free
+    region: frankfurt
+    autoDeploy: true
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: pomodori-db
+          property: connectionString
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase:
+          name: pomodori-db
+          property: user
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: pomodori-db
+          property: password
+      - key: SPRING_JPA_HIBERNATE_DDL_AUTO
+        value: update
+      - key: SPRING_JPA_SHOW_SQL
+        value: "true"
+      - key: JAVA_OPTS
+        value: "-Xmx512m"
+
+databases:
+  - name: pomodori-db
+    plan: free
+    region: frankfurt
