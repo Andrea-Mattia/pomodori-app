@@ -1,15 +1,11 @@
 services:
   - type: web
     name: pomodori-app
-    env: docker
-    plan: free
-    region: frankfurt
-    autoDeploy: true
-    envVars:
-      - key: JAVA_OPTS
-        value: "-Xmx512m"
+    env: java
+    buildCommand: ./mvnw clean install
+    startCommand: java -jar target/*.jar
 
 databases:
   - name: pomodori-db
-    plan: free
-    region: frankfurt
+    databaseName: pomodori
+    user: pomodori_user
