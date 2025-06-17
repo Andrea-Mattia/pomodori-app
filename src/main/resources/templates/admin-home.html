@@ -65,8 +65,7 @@
 									<th>Nome</th>
 									<th>Cognome</th>
 									<th>Codice Fiscale</th>
-									<th>Data</th>
-									<th>Ora</th>
+									<th>Data / Ora Scansione</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -76,8 +75,7 @@
 									<td th:text="${record.cognome}"></td>
 									<td th:text="${record.codiceFiscale}"></td>
 									<td th:text="${record.qrCode}"></td>
-									<td th:text="${#dates.format(record.scanTime, 'dd/MM/yyyy')}"></td>
-									<td th:text="${#dates.format(record.scanTime, 'HH:mm:ss')}"></td>
+									<td th:text="${#temporals.format(record.scanTime, 'dd/MM/yyyy HH:mm:ss')}"></td>
 								</tr>
 							</tbody>
 						</table>
