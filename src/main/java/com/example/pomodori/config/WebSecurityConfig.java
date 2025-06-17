@@ -27,6 +27,7 @@ public class WebSecurityConfig {
             )
             .formLogin(form -> form
             	.loginPage("/custom-login")
+            	.loginProcessingUrl("/custom-login")
             	.defaultSuccessUrl("/admin", true)
             	.permitAll()
             )
