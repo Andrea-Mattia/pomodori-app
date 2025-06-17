@@ -77,13 +77,11 @@
         const data = Object.fromEntries(formData.entries());
 
         try {
-          const response = await fetch('/scan', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-          });
+        	const formData = new FormData(form);
+        	const response = await fetch('/scan', {
+        	  method: 'POST',
+        	  body: formData
+        	});
 
           if (response.ok) {
             feedback.innerHTML = `<div class="alert alert-success">Registrazione avvenuta con successo!</div>`;
