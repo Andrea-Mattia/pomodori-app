@@ -32,13 +32,13 @@ body {
 			<form id="scanForm" novalidate>
 				<input type="hidden" class="form-control" id="qrCode" name="qrCode" />
 				<div class="mb-3">
-					<label for="nome" class="form-label">Nome</label> 
+					<label for="nome" class="form-label">Nome *</label> 
 					<input type="text" class="form-control" id="nome" name="nome" required>
 					<div class="invalid-feedback">Il nome è obbligatorio.</div>
 				</div>
 
 				<div class="mb-3">
-					<label for="cognome" class="form-label">Cognome</label> 
+					<label for="cognome" class="form-label">Cognome *</label> 
 					<input type="text" class="form-control" id="cognome" name="cognome" required>
 					<div class="invalid-feedback">Il cognome è obbligatorio.</div>
 				</div>
@@ -66,6 +66,12 @@ body {
       const form = document.getElementById('scanForm');
       const feedback = document.getElementById('feedback');
       const loader = document.getElementById('loader');
+      
+      const params = new URLSearchParams(window.location.search);
+      const qrCode = params.get("qr");
+      if (qrCode) {
+        document.getElementById("qrCode").value = qrCode;
+      }
 
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
