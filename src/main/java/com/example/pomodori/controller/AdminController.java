@@ -17,39 +17,38 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class AdminController {
 
-    @Autowired
-    private ScanRecordRepository repository;
+	@Autowired
+	private ScanRecordRepository repository;
 
-    @GetMapping("/admin")
-    public String adminHome(Model model) {
-        model.addAttribute("records", repository.findAll());
-        return "admin-home";
-    }
+	@GetMapping("/admin")
+	public String adminHome(Model model) {
+		model.addAttribute("records", repository.findAll());
+		return "admin-home";
+	}
 
-    @GetMapping("/login")
-    public String login() {
-        return "login";
-    }
-    
-    @GetMapping("/admin/export")
-    public void exportCSV(HttpServletResponse response) throws IOException {
-        response.setContentType("text/csv");
-        response.setHeader("Content-Disposition", "attachment; filename=presenze.csv");
+	@GetMapping("/login")
+	public String login() {
+		return "login";
+	}
 
-        List<ScanRecord> records = repository.findAll();
-        PrintWriter writer = response.getWriter();
-        writer.println("Nome,Cognome,Codice Fiscale,Data,Ora");
+	@GetMapping("/admin/export")
+	public void exportCSV(HttpServletResponse response) throws IOException {
+		response.setContentType("text/csv");
+		response.setHeader("Content-Disposition", "attachment; filename=presenze.csv");
 
-        for (ScanRecord r : records) {
-            String data = r.getScanTime().toLocalDate().toString();
-            String ora = r.getScanTime().toLocalTime().toString();
-            writer.printf("%s,%s,%s,%s,%s%n", r.getNome(), r.getCognome(), 
-                          r.getCodiceFiscale() != null ? r.getCodiceFiscale() : "", 
-                          data, ora);
-        }
+		List<ScanRecord> records = repository.findAll();
+		PrintWriter writer = response.getWriter();
+		writer.println("Nome,Cognome,Codice Fiscale,QR Code,Data,Ora");
 
-        writer.flush();
-        writer.close();
-    }
+		for (ScanRecord r : records) {
+			String data = r.getScanTime().toLocalDate().toString();
+			String ora = r.getScanTime().toLocalTime().toString();
+			writer.printf("%s,%s,%s,%s,%s%n", r.getNome(), r.getCognome(),
+					r.getCodiceFiscale() != null ? r.getCodiceFiscale() : "", r.getQrCode(), data, ora);
+		}
+
+		writer.flush();
+		writer.close();
+	}
 
 }

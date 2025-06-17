@@ -3,41 +3,46 @@ package com.example.pomodori.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+
+import com.example.pomodori.service.AdminDetailsService;
 
 @Configuration
 public class WebSecurityConfig {
+
+    private final AdminDetailsService adminDetailsService;
+
+    public WebSecurityConfig(AdminDetailsService adminDetailsService) {
+        this.adminDetailsService = adminDetailsService;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/admin/**").authenticated()
+                .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().permitAll()
             )
             .formLogin(form -> form
-                .loginPage("/login")
-                .defaultSuccessUrl("/admin", true)
-                .permitAll()
+            	.loginPage("/custom-login")
+            	.defaultSuccessUrl("/admin", true)
+            	.permitAll()
             )
             .logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login?logout")
                 .permitAll()
             )
-            .csrf().disable(); // solo per test, in produzione va abilitato!
+            .userDetailsService(adminDetailsService)
+            .csrf().disable();
 
         return http.build();
     }
 
     @Bean
-    public org.springframework.security.core.userdetails.UserDetailsService userDetailsService() {
-        var user = org.springframework.security.core.userdetails.User.withDefaultPasswordEncoder()
-            .username("admin")
-            .password("password") // Cambia la password!
-            .roles("ADMIN")
-            .build();
-
-        return new org.springframework.security.provisioning.InMemoryUserDetailsManager(user);
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
