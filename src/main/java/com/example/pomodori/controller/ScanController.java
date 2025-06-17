@@ -39,7 +39,6 @@ public class ScanController {
         entity.setQrCode(dto.getQrCode());
 
         repository.save(entity);
-        model.addAttribute("message", "Dati salvati correttamente!");
-        return "scan-success";
+        return "scan-form";
     }
 }
