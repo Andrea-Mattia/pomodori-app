@@ -43,9 +43,7 @@
       <h5 class="px-3 mb-3">Admin Panel</h5>
       <ul class="nav nav-pills flex-column mb-auto w-100">
         <li class="nav-item w-100"><a href="#" class="nav-link px-3">Home</a></li>
-        <li class="nav-item w-100"><a href="#" class="nav-link px-3">Dipendenti</a></li>
-        <li class="nav-item w-100"><a href="#" class="nav-link px-3">Report</a></li>
-        <li class="nav-item w-100"><a href="#" class="nav-link px-3">Impostazioni</a></li>
+        <li class="nav-item w-100"><a href="/admin/export" class="nav-link px-3">📁 Esporta CSV</a></li>
       </ul>
       <hr class="w-100">
       <a href="/logout" class="px-3">Esci</a>
@@ -53,36 +51,39 @@
 
     <!-- Content -->
     <main class="col py-3 content">
-      <h2>Benvenuto, Admin</h2>
-      <p class="lead">Questa è la tua dashboard di controllo.</p>
-      <!-- Esempio contenuto -->
-      <div class="row">
-        <div class="col-md-4 mb-3">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Dipendenti attivi</h5>
-              <p class="card-text display-6">23</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4 mb-3">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">File completate</h5>
-              <p class="card-text display-6">87</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4 mb-3">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Segnalazioni</h5>
-              <p class="card-text display-6">4</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
+				<h2>Benvenuto, Admin</h2>
+				<p class="lead">Questa è la tua dashboard di controllo.</p>
+				<!-- Esempio contenuto -->
+				<div class="container my-5">
+					<h2 class="text-center mb-4">Presenze Registrate</h2>
+
+					<div class="table-responsive">
+						<table class="table table-striped table-bordered align-middle">
+							<thead class="table-dark">
+								<tr>
+									<th>#</th>
+									<th>Nome</th>
+									<th>Cognome</th>
+									<th>Codice Fiscale</th>
+									<th>Data</th>
+									<th>Ora</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="record, iterStat : ${records}">
+									<td th:text="${iterStat.index + 1}"></td>
+									<td th:text="${record.nome}"></td>
+									<td th:text="${record.cognome}"></td>
+									<td th:text="${record.codiceFiscale}"></td>
+									<td th:text="${record.qrCode}"></td>
+									<td th:text="${#dates.format(record.scanTime, 'dd/MM/yyyy')}"></td>
+									<td th:text="${#dates.format(record.scanTime, 'HH:mm:ss')}"></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</main>
   </div>
 </div>
 
