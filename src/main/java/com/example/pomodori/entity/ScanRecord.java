@@ -3,49 +3,78 @@ package com.example.pomodori.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Entity
 @Table(name = "scan_records")
 public class ScanRecord {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @NotBlank
-    private String nome;
+	@NotBlank
+	private String nome;
 
-    @NotBlank
-    private String cognome;
+	@NotBlank
+	private String cognome;
 
-    private String codiceFiscale;
+	private String codiceFiscale;
 
-    @NotBlank
-    private String qrCode;
+	@NotBlank
+	private String qrCode;
 
-    private LocalDateTime scanTime;
+	private LocalDateTime scanTime;
 
-    public ScanRecord() {
-        this.scanTime = LocalDateTime.now();
-    }
+	public ScanRecord() {
+		this.scanTime = LocalDateTime.now(ZoneId.of("Europe/Rome"));
+	}
 
-    // getters e setters
+	public Long getId() {
+		return id;
+	}
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public String getNome() { return nome; }
-    public void setNome(String nome) { this.nome = nome; }
+	public String getNome() {
+		return nome;
+	}
 
-    public String getCognome() { return cognome; }
-    public void setCognome(String cognome) { this.cognome = cognome; }
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
 
-    public String getCodiceFiscale() { return codiceFiscale; }
-    public void setCodiceFiscale(String codiceFiscale) { this.codiceFiscale = codiceFiscale; }
+	public String getCognome() {
+		return cognome;
+	}
 
-    public String getQrCode() { return qrCode; }
-    public void setQrCode(String qrCode) { this.qrCode = qrCode; }
+	public void setCognome(String cognome) {
+		this.cognome = cognome;
+	}
 
-    public LocalDateTime getScanTime() { return scanTime; }
-    public void setScanTime(LocalDateTime scanTime) { this.scanTime = scanTime; }
+	public String getCodiceFiscale() {
+		return codiceFiscale;
+	}
+
+	public void setCodiceFiscale(String codiceFiscale) {
+		this.codiceFiscale = codiceFiscale;
+	}
+
+	public String getQrCode() {
+		return qrCode;
+	}
+
+	public void setQrCode(String qrCode) {
+		this.qrCode = qrCode;
+	}
+
+	public LocalDateTime getScanTime() {
+		return scanTime;
+	}
+
+	public void setScanTime(LocalDateTime scanTime) {
+		this.scanTime = scanTime;
+	}
 }
