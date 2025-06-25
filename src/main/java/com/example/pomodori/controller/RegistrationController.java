@@ -15,6 +15,7 @@ import com.example.pomodori.dto.AdminDto;
 import com.example.pomodori.dto.ResetPasswordDto;
 import com.example.pomodori.entity.Admin;
 import com.example.pomodori.repository.AdminRepository;
+import com.example.pomodori.service.EmailService;
 
 import jakarta.validation.Valid;
 
@@ -23,10 +24,12 @@ public class RegistrationController {
 
 	private final AdminRepository repo;
 	private final PasswordEncoder encoder;
+	private final EmailService emailService;
 
-	public RegistrationController(AdminRepository repo, PasswordEncoder encoder) {
-		this.repo = repo;
-		this.encoder = encoder;
+	public RegistrationController(AdminRepository repo, PasswordEncoder encoder, EmailService emailService) {
+	    this.repo = repo;
+	    this.encoder = encoder;
+	    this.emailService = emailService;
 	}
 
 	@GetMapping("/register")
@@ -89,6 +92,8 @@ public class RegistrationController {
 		Admin admin = opt.get();
 		admin.setPassword(encoder.encode(dto.getNewPassword()));
 		repo.save(admin);
+		
+		emailService.sendResetConfirmation(admin.getEmail(), admin.getUsername());
 
 		redirectAttributes.addFlashAttribute("resetSuccess", "Password aggiornata con successo. Ora puoi accedere.");
 		return "redirect:/login";

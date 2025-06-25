@@ -1,12 +1,16 @@
 package com.example.pomodori.controller;
 
+import com.example.pomodori.dto.ReportSettingDto;
+import com.example.pomodori.entity.ReportSetting;
 import com.example.pomodori.entity.ScanRecord;
+import com.example.pomodori.repository.ReportSettingRepository;
 import com.example.pomodori.repository.ScanRecordRepository;
 
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.Principal;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -14,24 +18,34 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class AdminController {
 
 	@Autowired
 	private ScanRecordRepository repository;
+	
+	private final ReportSettingRepository repo;
+
+    public AdminController(ReportSettingRepository repo) {
+        this.repo = repo;
+    }
 
 	@GetMapping("/admin")
-	public String adminHome(Model model) {
+	public String adminHome(Model model, Principal principal) {
 		model.addAttribute("records", repository.findAll());
+		model.addAttribute("username", principal.getName());
 		return "admin-home";
 	}
 
-	@GetMapping("/login")
+	@GetMapping("/admin/login")
 	public String login(Model model) {
 		return "login";
 	}
-
+	
 	@GetMapping("/admin/export")
 	public void exportCSV(HttpServletResponse response) throws IOException {
 		response.setContentType("text/csv");
@@ -57,9 +71,34 @@ public class AdminController {
 		    );
 		}
 
-
 		writer.flush();
 		writer.close();
 	}
+	
+	@GetMapping("/admin/settings")
+    public String showSettings(Model model) {
+        ReportSetting setting = repo.findById(1L).orElseGet(() -> {
+            ReportSetting defaultSetting = new ReportSetting();
+            defaultSetting.setFrequency("daily");
+            return repo.save(defaultSetting);
+        });
+
+        ReportSettingDto dto = new ReportSettingDto();
+        dto.setFrequency(setting.getFrequency());
+        model.addAttribute("reportSettings", dto);
+        return "admin-settings";
+    }
+
+    @PostMapping("/admin/settings")
+    public String updateSettings(@ModelAttribute ReportSettingDto dto, RedirectAttributes redirectAttributes) {
+        ReportSetting setting = repo.findById(1L).orElse(new ReportSetting());
+        setting.setFrequency(dto.getFrequency());
+        setting.setAdminEmail(dto.getAdminEmail());
+        setting.setId(1L);
+        repo.save(setting);
+
+        redirectAttributes.addFlashAttribute("message", "Frequenza aggiornata con successo.");
+        return "redirect:/admin/settings";
+    }
 
 }

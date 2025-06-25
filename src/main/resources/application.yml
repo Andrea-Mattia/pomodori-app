@@ -8,10 +8,22 @@ spring:
     username: pomodori_db_user
     password: hsbzJyQsC7JcbhzpmOw54g7tPcColcVu
     driver-class-name: org.postgresql.Driver
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: andrea.mattia94@gmail.com
+    password: wpik dkuf mkkb jgpp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls: 
+           enable: true
+    from: andrea.mattia94@gmail.com
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
