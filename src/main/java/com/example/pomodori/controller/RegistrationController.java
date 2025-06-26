@@ -40,16 +40,25 @@ public class RegistrationController {
 
 	@PostMapping("/register")
 	public String register(@Valid @ModelAttribute("adminDto") AdminDto dto, BindingResult result, Model model) {
-		if (!dto.getPassword().equals(dto.getConfirmPassword())) {
+		if (dto.getUsername() == null || dto.getUsername().isBlank()) {
+			result.rejectValue("username", "error.username", "Username obbligatorio");
+		} else if (repo.findByUsername(dto.getUsername()).isPresent()) {
+			result.rejectValue("username", "error.username", "Username già esistente");
+		}
+		
+		if (dto.getEmail() == null || dto.getEmail().isBlank()) {
+			result.rejectValue("email", "error.email", "Email obbligatoria");
+		}
+		
+		if (dto.getPassword() == null || dto.getPassword().isBlank()) {
+			result.rejectValue("password", "error.password", "Password obbligatoria.");
+		} else if (!dto.getPassword().equals(dto.getConfirmPassword())) {
 			result.rejectValue("confirmPassword", "error.confirmPassword", "Le password non corrispondono");
 		}
 
-		if (repo.findByUsername(dto.getUsername()).isPresent()) {
-			result.rejectValue("username", "error.username", "Username già esistente");
-		}
-
-		if (result.hasErrors())
+		if (result.hasErrors()) {
 			return "register";
+		}
 
 		Admin admin = new Admin();
 		admin.setUsername(dto.getUsername());
@@ -57,7 +66,7 @@ public class RegistrationController {
 		admin.setEmail(dto.getEmail());
 		repo.save(admin);
 
-		return "redirect:/login?registered";
+		return "redirect:/custom-login?registered";
 	}
 
 	@GetMapping("/custom-login")

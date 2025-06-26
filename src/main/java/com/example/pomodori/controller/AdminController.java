@@ -1,8 +1,10 @@
 package com.example.pomodori.controller;
 
 import com.example.pomodori.dto.ReportSettingDto;
+import com.example.pomodori.entity.Admin;
 import com.example.pomodori.entity.ReportSetting;
 import com.example.pomodori.entity.ScanRecord;
+import com.example.pomodori.repository.AdminRepository;
 import com.example.pomodori.repository.ReportSettingRepository;
 import com.example.pomodori.repository.ScanRecordRepository;
 
@@ -28,8 +30,11 @@ public class AdminController {
 	@Autowired
 	private ScanRecordRepository repository;
 	
+	@Autowired
+	private AdminRepository adminRepository;
+	
 	private final ReportSettingRepository repo;
-
+	
     public AdminController(ReportSettingRepository repo) {
         this.repo = repo;
     }
@@ -79,7 +84,9 @@ public class AdminController {
     public String showSettings(Model model) {
         ReportSetting setting = repo.findById(1L).orElseGet(() -> {
             ReportSetting defaultSetting = new ReportSetting();
+            Admin admin = adminRepository.findAll().getFirst();
             defaultSetting.setFrequency("daily");
+            defaultSetting.setAdminEmail(admin.getEmail());
             return repo.save(defaultSetting);
         });
 
