@@ -9,6 +9,8 @@ public class ReportSettingDto {
 	private LocalDate lastSentDate;
 	
 	private String adminEmail;
+	
+	private Integer timeoutMinutes;
 
 	public String getFrequency() {
 		return frequency;
@@ -32,5 +34,13 @@ public class ReportSettingDto {
 
 	public void setAdminEmail(String adminEmail) {
 		this.adminEmail = adminEmail;
+	}
+
+	public Integer getTimeoutMinutes() {
+		return timeoutMinutes;
+	}
+
+	public void setTimeoutMinutes(Integer timeoutMinutes) {
+		this.timeoutMinutes = timeoutMinutes;
 	}
 }

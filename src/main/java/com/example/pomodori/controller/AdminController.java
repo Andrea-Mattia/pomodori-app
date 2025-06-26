@@ -22,6 +22,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -43,6 +44,7 @@ public class AdminController {
 	public String adminHome(Model model, Principal principal) {
 		model.addAttribute("records", repository.findAll());
 		model.addAttribute("username", principal.getName());
+		model.addAttribute("timeoutMinutes", repo.findById(1L).map(ReportSetting::getTimeoutMinutes).orElse(15));
 		return "admin-home";
 	}
 
@@ -50,6 +52,13 @@ public class AdminController {
 	public String login(Model model) {
 		return "login";
 	}
+	
+	@GetMapping("/admin/keep-alive")
+	@ResponseBody
+	public String keepAlive() {
+	    return "OK";
+	}
+
 	
 	@GetMapping("/admin/export")
 	public void exportCSV(HttpServletResponse response) throws IOException {
@@ -87,12 +96,14 @@ public class AdminController {
             Admin admin = adminRepository.findAll().getFirst();
             defaultSetting.setFrequency("daily");
             defaultSetting.setAdminEmail(admin.getEmail());
+            defaultSetting.setTimeoutMinutes(15);
             return repo.save(defaultSetting);
         });
 
         ReportSettingDto dto = new ReportSettingDto();
         dto.setFrequency(setting.getFrequency());
         dto.setAdminEmail(setting.getAdminEmail());
+        dto.setTimeoutMinutes(setting.getTimeoutMinutes() != null ? setting.getTimeoutMinutes() : 15);
         model.addAttribute("reportSettings", dto);
         return "admin-settings";
     }
@@ -102,6 +113,7 @@ public class AdminController {
         ReportSetting setting = repo.findById(1L).orElse(new ReportSetting());
         setting.setFrequency(dto.getFrequency());
         setting.setAdminEmail(dto.getAdminEmail());
+        setting.setTimeoutMinutes(dto.getTimeoutMinutes());
         setting.setId(1L);
         repo.save(setting);
 

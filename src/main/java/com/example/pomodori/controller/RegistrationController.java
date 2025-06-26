@@ -105,6 +105,6 @@ public class RegistrationController {
 		emailService.sendResetConfirmation(admin.getEmail(), admin.getUsername());
 
 		redirectAttributes.addFlashAttribute("resetSuccess", "Password aggiornata con successo. Ora puoi accedere.");
-		return "redirect:/login";
+		return "redirect:/custom-login";
 	}
 }

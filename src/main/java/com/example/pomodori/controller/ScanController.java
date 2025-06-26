@@ -45,7 +45,7 @@ public class ScanController {
 
         repository.save(entity);
         
-        emailService.sendPresenceNotification(entity.getNome(), entity.getCognome(), entity.getQrCode());
+//        emailService.sendPresenceNotification(entity.getNome(), entity.getCognome(), entity.getQrCode());
         
         return "scan-form";
     }
