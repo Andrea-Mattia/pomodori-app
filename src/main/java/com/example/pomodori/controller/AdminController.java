@@ -92,6 +92,7 @@ public class AdminController {
 
         ReportSettingDto dto = new ReportSettingDto();
         dto.setFrequency(setting.getFrequency());
+        dto.setAdminEmail(setting.getAdminEmail());
         model.addAttribute("reportSettings", dto);
         return "admin-settings";
     }
