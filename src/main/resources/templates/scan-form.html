@@ -18,7 +18,7 @@
 				<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 				<div class="mb-3">
 					<label for="qrCode" class="form-label">Qr Code</label> 
-					<input type="text" class="form-control" id="qrCode" name="qrCode" required disabled>
+					<input type="text" class="form-control" id="qrCode" name="qrCode" required readonly>
 					<div class="invalid-feedback">Il qr code è obbligatorio.</div>
 				</div>
 				
