@@ -28,8 +28,18 @@
                 { facingMode: "environment" }, // fotocamera posteriore
                 { fps: 10, qrbox: 250 },
                 qrCodeMessage => {
-                    // Reindirizza al form con il QR code letto
-                    window.location.href = `/scan?qr=${encodeURIComponent(qrCodeMessage)}`;
+                    let qrValue = qrCodeMessage;
+
+                    try {
+                        const url = new URL(qrCodeMessage);
+                        const params = new URLSearchParams(url.search);
+                        qrValue = params.get("qr") || qrCodeMessage;
+                    } catch (e) {
+                        // Non è un URL completo, lo uso così com'è
+                    }
+
+                    // Reindirizza al form
+                    window.location.href = `/scan?qr=${encodeURIComponent(qrValue)}`;
                     qrReader.stop();
                 },
                 errorMessage => {
