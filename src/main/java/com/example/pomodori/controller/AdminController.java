@@ -7,21 +7,30 @@ import com.example.pomodori.entity.ScanRecord;
 import com.example.pomodori.repository.AdminRepository;
 import com.example.pomodori.repository.ReportSettingRepository;
 import com.example.pomodori.repository.ScanRecordRepository;
+import com.example.pomodori.specification.ScanRecordSpecification;
 
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.Principal;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -40,13 +49,37 @@ public class AdminController {
         this.repo = repo;
     }
 
-	@GetMapping("/admin")
-	public String adminHome(Model model, Principal principal) {
-		model.addAttribute("records", repository.findAll());
-		model.addAttribute("username", principal.getName());
-		model.addAttribute("timeoutMinutes", repo.findById(1L).map(ReportSetting::getTimeoutMinutes).orElse(15));
-		return "admin-home";
-	}
+    @GetMapping("/admin")
+    public String adminHome(
+            @RequestParam(required = false) String nome,
+            @RequestParam(required = false) String cognome,
+            @RequestParam(required = false) String qrCode,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Model model,
+            Principal principal) {
+
+        Specification<ScanRecord> spec = Specification
+            .where(ScanRecordSpecification.hasNome(nome))
+            .and(ScanRecordSpecification.hasCognome(cognome))
+            .and(ScanRecordSpecification.hasQrCode(qrCode))
+            .and(ScanRecordSpecification.hasData(data));
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("scanTime").descending());
+        Page<ScanRecord> resultPage = repository.findAll(spec, pageable);
+
+        model.addAttribute("records", resultPage.getContent());
+        model.addAttribute("page", resultPage);
+        model.addAttribute("size", size);
+        model.addAttribute("username", principal.getName());
+        model.addAttribute("nome", nome);
+        model.addAttribute("cognome", cognome);
+        model.addAttribute("qrCode", qrCode);
+        model.addAttribute("data", data);
+        model.addAttribute("timeoutMinutes", repo.findById(1L).map(ReportSetting::getTimeoutMinutes).orElse(10));
+        return "admin-home";
+    }
 
 	@GetMapping("/admin/login")
 	public String login(Model model) {
@@ -59,34 +92,44 @@ public class AdminController {
 	    return "OK";
 	}
 
+	@GetMapping("/admin/export-page")
+	public String export(Model model) {
+		return "export-page";
+	}
 	
 	@GetMapping("/admin/export")
-	public void exportCSV(HttpServletResponse response) throws IOException {
-		response.setContentType("text/csv");
-		response.setHeader("Content-Disposition", "attachment; filename=presenze.csv");
+	public void exportCSV(
+	        @RequestParam(required = false) String nome,
+	        @RequestParam(required = false) String cognome,
+	        @RequestParam(required = false) String qrCode,
+	        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data,
+	        HttpServletResponse response) throws IOException {
 
-		List<ScanRecord> records = repository.findAll();
-		PrintWriter writer = response.getWriter();
-		DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-		DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+	    Specification<ScanRecord> spec = Specification
+	        .where(ScanRecordSpecification.hasNome(nome))
+	        .and(ScanRecordSpecification.hasCognome(cognome))
+	        .and(ScanRecordSpecification.hasQrCode(qrCode))
+	        .and(ScanRecordSpecification.hasData(data));
 
-		writer.println("Nome,Cognome,Codice Fiscale,QR Code,Data,Ora");
+	    List<ScanRecord> records = repository.findAll(spec);
 
-		for (ScanRecord r : records) {
-		    String data = r.getScanTime().toLocalDate().format(dateFormatter);
-		    String ora = r.getScanTime().toLocalTime().format(timeFormatter);
-		    writer.printf("%s,%s,%s,%s,%s,%s%n",
-		        r.getNome(),
-		        r.getCognome(),
-		        r.getCodiceFiscale() != null ? r.getCodiceFiscale() : "",
-		        r.getQrCode(),
-		        data,
-		        ora
-		    );
-		}
+	    response.setContentType("text/csv");
+	    response.setHeader("Content-Disposition", "attachment; filename=presenze.csv");
 
-		writer.flush();
-		writer.close();
+	    PrintWriter writer = response.getWriter();
+	    writer.println("Nome,Cognome,Codice Fiscale,QR Code,Data,Ora");
+	    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+	    DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+
+	    for (ScanRecord r : records) {
+	        writer.printf("%s,%s,%s,%s,%s,%s%n",
+	            r.getNome(),
+	            r.getCognome(),
+	            r.getCodiceFiscale() != null ? r.getCodiceFiscale() : "",
+	            r.getQrCode(),
+	            r.getScanTime().toLocalDate().format(dateFormatter),
+	            r.getScanTime().toLocalTime().format(timeFormatter));
+	    }
 	}
 	
 	@GetMapping("/admin/settings")

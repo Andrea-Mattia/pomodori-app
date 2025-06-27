@@ -16,7 +16,7 @@ body {
 	margin-top: 2rem;
 }
 
-.register-container {
+.mobile-container {
 	max-width: 400px;
 	margin: auto;
 	margin-top: 10vh;
@@ -26,39 +26,13 @@ body {
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.login-container {
-	max-width: 400px;
+.research-form {
 	margin: auto;
 	margin-top: 10vh;
 	padding: 30px;
 	background-color: #fff;
 	border-radius: 10px;
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.settings-container {
-	max-width: 400px;
-	margin: auto;
-	margin-top: 10vh;
-	padding: 30px;
-	background-color: #fff;
-	border-radius: 10px;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.reset-container {
-	max-width: 400px;
-	margin: auto;
-	margin-top: 10vh;
-	padding: 30px;
-	background-color: #fff;
-	border-radius: 10px;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.card {
-	max-width: 500px;
-	margin: auto;
 }
 
 #loader {
