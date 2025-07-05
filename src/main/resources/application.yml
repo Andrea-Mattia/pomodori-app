@@ -2,14 +2,14 @@ spring:
   application:
     name: pomodori
   datasource:
-    url: jdbc:postgresql://dpg-d181boogjchc73f97e50-a.frankfurt-postgres.render.com:5432/pomodori_db
-    username: pomodori_db_user
-    password: hsbzJyQsC7JcbhzpmOw54g7tPcColcVu
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASS}
     driver-class-name: org.postgresql.Driver
   mail:
     host: smtp.gmail.com
     port: 587
-    username: andrea.mattia94@gmail.com
+    username: ${MAIL_USER}
     password: ${MAIL_APP_PWD}
     properties:
       mail:
@@ -17,7 +17,7 @@ spring:
           auth: true
           starttls:
             enable: true
-    from: andrea.mattia94@gmail.com
+    from: ${MAIL_FROM}
 
   jpa:
     hibernate:
