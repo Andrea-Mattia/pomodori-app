@@ -10,6 +10,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.example.pomodori.entity.ReportSetting;
 import com.example.pomodori.entity.ScanRecord;
@@ -23,6 +24,9 @@ import jakarta.mail.util.ByteArrayDataSource;
 @Component
 public class ReportScheduler {
 
+    @Value("${report.schedule.cron}")
+    private String cronExpression;
+
     private final ScanRecordRepository repository;
     private final JavaMailSender mailSender;
     private final ReportSettingRepository settingRepository;
@@ -33,8 +37,8 @@ public class ReportScheduler {
         this.settingRepository = settingRepository;
     }
 
-    // Eseguito ogni giorno alle 20:00 (puoi modificarlo o usare @PostConstruct per test)
-    @Scheduled(cron = "0 0 18 * * *")
+    // Eseguito ogni giorno alle 18:30 (puoi modificarlo o nel .env)
+    @Scheduled(cron = "${report.schedule.cron}")
     public void sendReportIfConfigured() {
     	ReportSetting setting = settingRepository.findById(1L).orElse(null);
         if (setting == null) return;
