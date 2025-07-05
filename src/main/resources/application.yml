@@ -1,6 +1,4 @@
 spring:
-  config:
-   import: optional:file:application-secret.yml
   application:
     name: pomodori
   datasource:
@@ -12,18 +10,18 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: andrea.mattia94@gmail.com
-    password: ${MAIL_APP_PWD} #wpik dkuf mkkb jgpp
+    password: ${MAIL_APP_PWD}
     properties:
       mail:
         smtp:
           auth: true
-          starttls: 
-           enable: true
+          starttls:
+            enable: true
     from: andrea.mattia94@gmail.com
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -31,4 +29,4 @@ spring:
 server:
   servlet:
     session:
-     timeout: 15m
+      timeout: 15m
