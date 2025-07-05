@@ -34,7 +34,7 @@ public class ReportScheduler {
     }
 
     // Eseguito ogni giorno alle 20:00 (puoi modificarlo o usare @PostConstruct per test)
-    @Scheduled(cron = "0 50 17 * * *")
+    @Scheduled(cron = "0 0 18 * * *")
     public void sendReportIfConfigured() {
     	ReportSetting setting = settingRepository.findById(1L).orElse(null);
         if (setting == null) return;
