@@ -1,0 +1,18 @@
+name: Scheduled Report Job
+
+on:
+  schedule:
+    # Esegui ogni giorno alle 18:30 ora italiana estiva (16:30 UTC)
+    - cron: '30 16 * * *'
+  workflow_dispatch: # Esegui manualmente
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Render Report API
+        env:
+          TRIGGER_TOKEN: ${{ secrets.REPORT_TRIGGER_TOKEN }}
+        run: |
+          curl -X POST https://pomodori-app.onrender.com/api/trigger-report \
+            -H "Authorization: Bearer $TRIGGER_TOKEN"
