@@ -16,6 +16,7 @@ import com.example.pomodori.dto.ResetPasswordDto;
 import com.example.pomodori.entity.Admin;
 import com.example.pomodori.repository.AdminRepository;
 import com.example.pomodori.service.EmailService;
+import com.example.pomodori.service.ReportSettingService;
 
 import jakarta.validation.Valid;
 
@@ -25,11 +26,13 @@ public class RegistrationController {
 	private final AdminRepository repo;
 	private final PasswordEncoder encoder;
 	private final EmailService emailService;
+	private final ReportSettingService settingService;
 
-	public RegistrationController(AdminRepository repo, PasswordEncoder encoder, EmailService emailService) {
+	public RegistrationController(AdminRepository repo, PasswordEncoder encoder, EmailService emailService, ReportSettingService settingService) {
 	    this.repo = repo;
 	    this.encoder = encoder;
 	    this.emailService = emailService;
+	    this.settingService = settingService;
 	}
 
 	@GetMapping("/register")
@@ -65,6 +68,8 @@ public class RegistrationController {
 		admin.setPassword(encoder.encode(dto.getPassword()));
 		admin.setEmail(dto.getEmail());
 		repo.save(admin);
+		
+		settingService.firstSaveReportSettings(admin);
 
 		return "redirect:/custom-login?registered";
 	}
