@@ -2,7 +2,7 @@ name: Scheduled Report Job
 
 on:
   schedule:
-    - cron: '55 17 * * *' # Esempio: ogni giorno alle 15:30 italiane (13:30 UTC)
+    - cron: "30 18 * * *" # Esempio: ogni giorno alle 19:55 italiane (17:55 UTC)
   workflow_dispatch:
 
 jobs:
