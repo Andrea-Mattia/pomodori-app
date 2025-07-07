@@ -3,7 +3,7 @@ name: Scheduled Report Job
 on:
   schedule:
     # Esegui ogni giorno alle 18:30 ora italiana estiva (16:30 UTC)
-    - cron: '45 12 * * *'
+    - cron: '45 13 * * *'
   workflow_dispatch: # Esegui manualmente
 
 jobs:
