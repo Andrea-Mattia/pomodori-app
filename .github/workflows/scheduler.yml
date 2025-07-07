@@ -14,5 +14,4 @@ jobs:
         env:
           TRIGGER_TOKEN: ${{ secrets.REPORT_TRIGGER_TOKEN }}
         run: |
-          curl -X POST https://pomodori-app.onrender.com/api/trigger-report \
-            -H "Authorization: Bearer $TRIGGER_TOKEN"
+          curl -X POST https://pomodori-app.onrender.com/api/trigger-report -H "Authorization: Bearer $TRIGGER_TOKEN"
