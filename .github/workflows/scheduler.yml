@@ -2,14 +2,21 @@ name: Scheduled Report Job
 
 on:
   schedule:
-    # Esegui ogni giorno alle 18:30 ora italiana estiva (16:30 UTC)
-    - cron: '45 13 * * *'
-  workflow_dispatch: # Esegui manualmente
+    - cron: '55 14 * * *' # Esempio: ogni giorno alle 15:30 italiane (13:30 UTC)
+  workflow_dispatch:
 
 jobs:
   trigger:
     runs-on: ubuntu-latest
     steps:
+      - name: Wake up Render app
+        run: |
+          curl -s https://pomodori-app.onrender.com/
+
+      - name: Wait for app to be fully awake
+        run: |
+          sleep 300  # Attendi 5 minuti
+
       - name: Call Render Report API
         env:
           TRIGGER_TOKEN: ${{ secrets.REPORT_TRIGGER_TOKEN }}
