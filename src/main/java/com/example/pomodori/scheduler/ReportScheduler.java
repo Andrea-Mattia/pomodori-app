@@ -6,11 +6,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.beans.factory.annotation.Value;
 
 import com.example.pomodori.entity.ReportSetting;
 import com.example.pomodori.entity.ScanRecord;
@@ -37,8 +36,6 @@ public class ReportScheduler {
         this.settingRepository = settingRepository;
     }
 
-    // Eseguito ogni giorno alle 18:30 (puoi modificarlo o nel .env)
-    @Scheduled(cron = "${report.schedule.cron}")
     public void sendReportIfConfigured() {
     	ReportSetting setting = settingRepository.findById(1L).orElse(null);
         if (setting == null) return;
