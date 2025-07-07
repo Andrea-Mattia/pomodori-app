@@ -2,7 +2,7 @@ name: Scheduled Report Job
 
 on:
   schedule:
-    - cron: '55 14 * * *' # Esempio: ogni giorno alle 15:30 italiane (13:30 UTC)
+    - cron: '55 17 * * *' # Esempio: ogni giorno alle 15:30 italiane (13:30 UTC)
   workflow_dispatch:
 
 jobs:
@@ -15,7 +15,7 @@ jobs:
 
       - name: Wait for app to be fully awake
         run: |
-          sleep 300  # Attendi 5 minuti
+          sleep 240  # Attendi 3 minuti
 
       - name: Call Render Report API
         env:
