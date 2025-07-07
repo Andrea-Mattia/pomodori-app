@@ -22,14 +22,18 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/trigger-report").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().permitAll()
             )
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/api/trigger-report") // 🔥 DISABILITA CSRF SOLO QUI
+            )
             .formLogin(form -> form
-            	.loginPage("/custom-login")
-            	.loginProcessingUrl("/custom-login")
-            	.defaultSuccessUrl("/admin", true)
-            	.permitAll()
+                .loginPage("/custom-login")
+                .loginProcessingUrl("/custom-login")
+                .defaultSuccessUrl("/admin", true)
+                .permitAll()
             )
             .logout(logout -> logout
                 .logoutUrl("/logout")
