@@ -18,7 +18,11 @@
 		<h2 th:text="'Benvenuto, ' + ${username}"></h2>
 		<p class="lead">Questa è la tua dashboard di controllo.</p>
 
-		<div th:insert="~{fragments/search-pagination-fragment :: searchAndPagination('/admin', ${page})}"></div>
+		<div
+			th:insert="~{fragments/search-wrapper-fragment :: searchWrapper('/admin', ${page})}"
+			th:with="fieldsFragment='fragments/search-fields-scan :: scanFields',
+              	hiddenFieldsFragment='fragments/search-hidden-fields :: hiddenScan'">
+		</div>
 
 		<div class="table-responsive">
 			<h3 class="text-center mb-4">Presenze Registrate</h3>
@@ -45,27 +49,7 @@
 			</table>
 
 			<!-- PAGINAZIONE -->
-			<nav th:if="${page.totalPages > 1}">
-				<ul class="pagination justify-content-center">
-					<li class="page-item" th:classappend="${page.first} ? 'disabled'">
-						<a class="page-link"
-						th:href="@{/admin(page=${page.number - 1}, size=${page.size}, nome=${nome}, cognome=${cognome}, qrCode=${qrCode}, data=${data})}">Precedente</a>
-					</li>
-
-					<li class="page-item"
-						th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
-						th:classappend="${i == page.number} ? 'active'"><a
-						class="page-link"
-						th:href="@{/admin(page=${i}, size=${page.size}, nome=${nome}, cognome=${cognome}, qrCode=${qrCode}, data=${data})}"
-						th:text="${i + 1}">1</a></li>
-
-					<li class="page-item" th:classappend="${page.last} ? 'disabled'">
-						<a class="page-link"
-						th:href="@{/admin(page=${page.number + 1}, size=${page.size}, nome=${nome}, cognome=${cognome}, qrCode=${qrCode}, data=${data})}">Successiva</a>
-					</li>
-				</ul>
-			</nav>
-
+			<div th:insert="~{fragments/pagination-fragment :: pagination('/admin', ${page}, 'fragments/search-hidden-fields :: hiddenScan')}"></div>
 		</div>
 	</main>
 

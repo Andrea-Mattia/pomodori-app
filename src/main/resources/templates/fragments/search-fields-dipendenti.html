@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+  <div th:fragment="dipendentiFields"  class="row g-2 mb-3">
+    <div class="col-md-3">
+      <input type="text" name="nome" class="form-control" placeholder="Nome" th:value="${param.nome}" />
+    </div>
+    <div class="col-md-3">
+      <input type="text" name="cognome" class="form-control" placeholder="Cognome" th:value="${param.cognome}" />
+    </div>
+    <div class="col-md-3">
+      <input type="text" name="codiceFiscale" class="form-control" placeholder="Codice Fiscale" th:value="${param.codiceFiscale}" />
+    </div>
+    <div class="col-md-3">
+      <input type="text" name="soprannome" class="form-control" placeholder="Soprannome" th:value="${param.soprannome}" />
+    </div>
+  </div>
+</body>
+</html>

@@ -6,8 +6,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 @Entity
-@Table(name = "scan_records")
-public class ScanRecord {
+@Table(name = "dipendenti")
+public class Dipendente {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,15 +21,12 @@ public class ScanRecord {
 
 	@NotBlank
 	private String codiceFiscale;
-
-	@NotBlank
-	private String qrCode;
-
-	private LocalDateTime scanTime;
-
-	public ScanRecord() {
-		this.scanTime = LocalDateTime.now(ZoneId.of("Europe/Rome"));
-	}
+	
+	private String soprannome;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tipo_ruolo_id")
+    private TipoRuolo tipoRuolo;
 
 	public Long getId() {
 		return id;
@@ -63,19 +60,19 @@ public class ScanRecord {
 		this.codiceFiscale = codiceFiscale;
 	}
 
-	public String getQrCode() {
-		return qrCode;
+	public String getSoprannome() {
+		return soprannome;
 	}
 
-	public void setQrCode(String qrCode) {
-		this.qrCode = qrCode;
+	public void setSoprannome(String soprannome) {
+		this.soprannome = soprannome;
 	}
 
-	public LocalDateTime getScanTime() {
-		return scanTime;
+	public TipoRuolo getTipoRuolo() {
+		return tipoRuolo;
 	}
 
-	public void setScanTime(LocalDateTime scanTime) {
-		this.scanTime = scanTime;
+	public void setTipoRuolo(TipoRuolo tipoRuolo) {
+		this.tipoRuolo = tipoRuolo;
 	}
 }

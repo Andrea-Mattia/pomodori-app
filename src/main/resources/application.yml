@@ -6,6 +6,9 @@ spring:
     username: ${DB_USER}
     password: ${DB_PASS}
     driver-class-name: org.postgresql.Driver
+  sql:
+    init:
+      mode: never
   mail:
     host: smtp.gmail.com
     port: 587
@@ -21,7 +24,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -33,5 +36,5 @@ report:
 server:
   servlet:
     session:
-      timeout: 15m
+      timeout: 30m
 

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+  <div th:fragment="searchWrapper(queryUrl, pageObj)" class="research-form">
+    <h3 class="text-center mb-4">Ricerca</h3>
+
+    <form th:action="@{__${queryUrl}__}" method="get">
+      <!-- 🔥 Inserisci qui i campi dinamici -->
+      <div th:replace="~{__${fieldsFragment}__}"></div>
+
+      <div class="col-12">
+        <button type="submit" class="btn btn-primary">Cerca</button>
+        <a th:href="@{__${queryUrl}__}" class="btn btn-secondary">Reset</a>
+      </div>
+    </form>
+
+    <div class="d-flex justify-content-end align-items-center mb-3">
+      <div class="me-2">
+        <span th:text="'Pagina ' + ${pageObj.number + 1} + ' di ' + ${pageObj.totalPages}"></span>
+      </div>
+      <div>
+        <form method="get" th:action="@{__${queryUrl}__}">
+          <!-- Parametri generici sempre ripassati -->
+          <div th:replace="~{__${hiddenFieldsFragment}__}"></div>
+
+          <select name="size" onchange="this.form.submit()" class="form-select d-inline w-auto">
+            <option th:value="10" th:selected="${pageObj.size == 10}">10</option>
+            <option th:value="25" th:selected="${pageObj.size == 25}">25</option>
+            <option th:value="50" th:selected="${pageObj.size == 50}">50</option>
+          </select>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

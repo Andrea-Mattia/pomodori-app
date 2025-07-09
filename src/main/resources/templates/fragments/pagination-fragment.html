@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+  <div th:fragment="pagination(baseUrl, pageObj, hiddenFieldsFragment)">
+    <nav th:if="${pageObj.totalPages > 1}">
+      <ul class="pagination justify-content-center">
+
+        <!-- Precedente -->
+        <li class="page-item" th:classappend="${pageObj.first} ? 'disabled'">
+          <form method="get" th:action="@{__${baseUrl}__}" style="display: inline;">
+            <input type="hidden" name="page" th:value="${pageObj.number - 1}" />
+            <input type="hidden" name="size" th:value="${pageObj.size}" />
+            <div th:replace="~{__${hiddenFieldsFragment}__}"></div>
+            <button type="submit" class="page-link">Precedente</button>
+          </form>
+        </li>
+
+        <!-- Pagine -->
+        <li class="page-item"
+            th:each="i : ${#numbers.sequence(0, pageObj.totalPages - 1)}"
+            th:classappend="${i == pageObj.number} ? 'active'">
+          <form method="get" th:action="@{__${baseUrl}__}" style="display: inline;">
+            <input type="hidden" name="page" th:value="${i}" />
+            <input type="hidden" name="size" th:value="${pageObj.size}" />
+            <div th:replace="~{__${hiddenFieldsFragment}__}"></div>
+            <button type="submit" class="page-link" th:text="${i + 1}">1</button>
+          </form>
+        </li>
+
+        <!-- Successiva -->
+        <li class="page-item" th:classappend="${pageObj.last} ? 'disabled'">
+          <form method="get" th:action="@{__${baseUrl}__}" style="display: inline;">
+            <input type="hidden" name="page" th:value="${pageObj.number + 1}" />
+            <input type="hidden" name="size" th:value="${pageObj.size}" />
+            <div th:replace="~{__${hiddenFieldsFragment}__}"></div>
+            <button type="submit" class="page-link">Successiva</button>
+          </form>
+        </li>
+
+      </ul>
+    </nav>
+  </div>
+</body>
+</html>

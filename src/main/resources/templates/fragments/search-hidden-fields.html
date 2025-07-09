@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+  <div th:fragment="hiddenScan">
+    <input type="hidden" name="nome" th:value="${param.nome}" />
+    <input type="hidden" name="cognome" th:value="${param.cognome}" />
+    <input type="hidden" name="qrCode" th:value="${param.qrCode}" />
+    <input type="hidden" name="data" th:value="${param.data}" />
+  </div>
+
+  <div th:fragment="hiddenDipendenti">
+    <input type="hidden" name="nome" th:value="${param.nome}" />
+    <input type="hidden" name="cognome" th:value="${param.cognome}" />
+    <input type="hidden" name="codiceFiscale" th:value="${param.codiceFiscale}" />
+    <input type="hidden" name="soprannome" th:value="${param.soprannome}" />
+  </div>
+</body>
+</html>
