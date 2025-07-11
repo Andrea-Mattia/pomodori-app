@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Se c'è, pre-compila
   if (localStorage.getItem(storageKey)) {
-    usernameInput.value = localStorage.getItem(storageKey);
+    if (usernameInput) usernameInput.value = localStorage.getItem(storageKey);
     if (rememberCheckbox) rememberCheckbox.checked = true;
   }
 

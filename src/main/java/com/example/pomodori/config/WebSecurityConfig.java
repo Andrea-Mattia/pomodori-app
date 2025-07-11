@@ -54,7 +54,9 @@ public class WebSecurityConfig {
     public SecurityFilterChain dipendenteSecurity(HttpSecurity http) throws Exception {
         http
             .securityMatcher("/scan", "/scan/**", "/dipendente/**")
-            .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+            .authorizeHttpRequests(auth -> auth
+            		.requestMatchers("/dipendente/login").permitAll()
+            		.anyRequest().authenticated())
             .formLogin(form -> form
                 .loginPage("/dipendente/login")
                 .loginProcessingUrl("/dipendente/login")

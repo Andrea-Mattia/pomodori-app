@@ -51,8 +51,8 @@ public class ScanController {
     }
     
     @GetMapping("/dipendente/login")
-    public String loginDipendente(Principal principal) {
-    	return "dipendente-login";
+    public String loginDipendente() {
+        return "dipendente-login";
     }
     
     @GetMapping("/scan")
