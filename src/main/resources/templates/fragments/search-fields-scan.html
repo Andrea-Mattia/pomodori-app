@@ -1,18 +1,31 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-  <div th:fragment="scanFields" class="row g-2 mb-3">
-    <div class="col-md-3">
-      <input type="text" name="nome" class="form-control" placeholder="Nome" th:value="${param.nome}" />
+  <div th:fragment="scanFields" class="g-2 mb-3">
+    <div class="row">
+    	<div class="col-md-4 mb-3">
+	      <input type="text" name="username" class="form-control" placeholder="Username" th:value="${param.username}" />
+	    </div>
+    	<div class="col-md-4">
+	      <input type="text" name="nome" class="form-control" placeholder="Nome" th:value="${param.nome}" />
+	    </div>
+	    <div class="col-md-4">
+	      <input type="text" name="cognome" class="form-control" placeholder="Cognome" th:value="${param.cognome}" />
+	    </div>
     </div>
-    <div class="col-md-3">
-      <input type="text" name="cognome" class="form-control" placeholder="Cognome" th:value="${param.cognome}" />
-    </div>
-    <div class="col-md-3">
-      <input type="text" name="qrCode" class="form-control" placeholder="QR Code" th:value="${param.qrCode}" />
-    </div>
-    <div class="col-md-3">
-      <input type="date" name="data" class="form-control" th:value="${param.data}" />
+    <div class="row">
+    	<div class="col-md-3">
+	      <input type="text" name="soprannome" class="form-control" placeholder="Soprannome" th:value="${param.soprannome}" />
+	    </div>
+    	<div class="col-md-3">
+	      <input type="text" name="ruoloDescrizione" class="form-control" placeholder="Ruolo" th:value="${param.ruoloDescrizione}" />
+	    </div>
+	    <div class="col-md-3">
+	      <input type="text" name="qrCode" class="form-control" placeholder="QR Code" th:value="${param.qrCode}" />
+	    </div>
+	    <div class="col-md-3">
+	      <input type="date" name="data" class="form-control" placeholder="Data" th:value="${param.data}" />
+	    </div>
     </div>
   </div>
 </body>

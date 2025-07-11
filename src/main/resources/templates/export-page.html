@@ -14,11 +14,18 @@
 		<h2>Esporta Presenze Filtrate</h2>
 
 		<form method="get" th:action="@{/admin/export}">
-			<div class="row g-2 mb-3">
-				<div class="col-md-3"><input type="text" name="nome" placeholder="Nome" class="form-control" /></div>
-				<div class="col-md-3"><input type="text" name="cognome" placeholder="Cognome" class="form-control" /></div>
-				<div class="col-md-3"><input type="text" name="qrCode" placeholder="QR Code" class="form-control" /></div>
-				<div class="col-md-3"><input type="date" name="data" class="form-control" /></div>
+			<div class="g-2 mb-3">
+				<div class="row mb-3">
+					<div class="col-md-3"><input type="text" name="username" placeholder="Username" class="form-control" /></div>
+					<div class="col-md-3"><input type="text" name="nome" placeholder="Nome" class="form-control" /></div>
+					<div class="col-md-3"><input type="text" name="cognome" placeholder="Cognome" class="form-control" /></div>
+					<div class="col-md-3"><input type="text" name="soprannome" placeholder="Soprannome" class="form-control" /></div>
+				</div>
+				<div class="row">
+					<div class="col-md-4"><input type="text" name="ruoloDescrizione" placeholder="Ruolo" class="form-control" /></div>
+					<div class="col-md-4"><input type="text" name="qrCode" placeholder="QR Code" class="form-control" /></div>
+					<div class="col-md-4"><input type="date" name="data" placeholder="Data" class="form-control" /></div>
+				</div>
 			</div>
 			<button type="submit" class="btn btn-success">Esporta CSV</button>
 		</form>

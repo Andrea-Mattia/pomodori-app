@@ -4,6 +4,9 @@ import jakarta.validation.constraints.NotBlank;
 
 public class ScanRecordDto {
 
+	@NotBlank(message = "Lo username è obbligatorio")
+	private String username;
+	
 	@NotBlank(message = "Il nome è obbligatorio")
 	private String nome;
 
@@ -15,6 +18,19 @@ public class ScanRecordDto {
 
 	@NotBlank(message = "QR code è obbligatorio")
 	private String qrCode;
+	
+	private String soprannome;
+	
+	@NotBlank(message = "Il ruolo è obbligatorio")
+	private String ruoloDescrizione;
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
 
 	public String getNome() {
 		return nome;
@@ -46,5 +62,21 @@ public class ScanRecordDto {
 
 	public void setQrCode(String qrCode) {
 		this.qrCode = qrCode;
+	}
+
+	public String getSoprannome() {
+		return soprannome;
+	}
+
+	public void setSoprannome(String soprannome) {
+		this.soprannome = soprannome;
+	}
+
+	public String getRuoloDescrizione() {
+		return ruoloDescrizione;
+	}
+
+	public void setRuoloDescrizione(String ruoloDescrizione) {
+		this.ruoloDescrizione = ruoloDescrizione;
 	}
 }

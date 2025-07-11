@@ -4,6 +4,10 @@ body {
 	background-color: #f8f9fa;
 }
 
+custom-header-nav {
+	position: fixed;
+}
+
 .navbar-dark .navbar-nav .nav-link {
 	color: white;
 }

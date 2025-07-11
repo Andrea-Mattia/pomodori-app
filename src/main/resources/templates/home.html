@@ -8,47 +8,24 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
 </head>
 <body>
+
+	<div th:insert="~{fragments/header-fragment}"></div>
+	
     <div class="container">
         <div class="mobile-container max-width-mobile text-center">
         	<h1 class="mb-4">Benvenuto</h1>
 	        <p class="lead">Premi il pulsante per scansionare il QR code</p>
 	
-	        <button class="btn btn-primary btn-lg mb-3" onclick="startScanner()"><i class="bi bi-camera-fill"></i> Avvia fotocamera</button>
-	
+	        <button id="startScannerButton" class="btn btn-primary btn-lg mb-3">
+			  <i class="bi bi-camera-fill"></i> Avvia fotocamera
+			</button>
+
 	        <div id="qr-reader" class="mx-auto" style="width: 300px;"></div>
         </div>
     </div>
 
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-    <script>
-        function startScanner() {
-            const qrReader = new Html5Qrcode("qr-reader");
-
-            qrReader.start(
-                { facingMode: "environment" }, // fotocamera posteriore
-                { fps: 10, qrbox: 250 },
-                qrCodeMessage => {
-                    let qrValue = qrCodeMessage;
-
-                    try {
-                        const url = new URL(qrCodeMessage);
-                        const params = new URLSearchParams(url.search);
-                        qrValue = params.get("qr") || qrCodeMessage;
-                    } catch (e) {
-                        // Non è un URL completo, lo uso così com'è
-                    }
-
-                    // Reindirizza al form
-                    window.location.href = `/scan?qr=${encodeURIComponent(qrValue)}`;
-                    qrReader.stop();
-                },
-                errorMessage => {
-                    // Puoi ignorare gli errori di scansione continui
-                }
-            ).catch(err => {
-                alert("Impossibile accedere alla fotocamera: " + err);
-            });
-        }
-    </script>
+    <script th:src="@{/js/script.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

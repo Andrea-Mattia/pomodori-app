@@ -1,9 +1,10 @@
 package com.example.pomodori.specification;
 
-import org.springframework.data.jpa.domain.Specification;
-import com.example.pomodori.entity.ScanRecord;
-
 import java.time.LocalDate;
+
+import org.springframework.data.jpa.domain.Specification;
+
+import com.example.pomodori.entity.ScanRecord;
 
 public class ScanRecordSpecification {
 
@@ -20,6 +21,21 @@ public class ScanRecordSpecification {
     public static Specification<ScanRecord> hasQrCode(String qrCode) {
         return (root, query, cb) ->
                 qrCode != null && !qrCode.isBlank() ? cb.like(cb.lower(root.get("qrCode")), "%" + qrCode.toLowerCase() + "%") : null;
+    }
+    
+    public static Specification<ScanRecord> hasSoprannome(String soprannome) {
+    	return (root, query, cb) ->
+    	soprannome != null && !soprannome.isBlank() ? cb.like(cb.lower(root.get("soprannome")), "%" + soprannome.toLowerCase() + "%") : null;
+    }
+    
+    public static Specification<ScanRecord> hasUsername(String username) {
+    	return (root, query, cb) ->
+    	username != null && !username.isBlank() ? cb.like(cb.lower(root.get("username")), "%" + username.toLowerCase() + "%") : null;
+    }
+    
+    public static Specification<ScanRecord> hasRuoloDescrizione(String ruoloDescrizione) {
+    	return (root, query, cb) ->
+    	ruoloDescrizione != null && !ruoloDescrizione.isBlank() ? cb.like(cb.lower(root.get("ruoloDescrizione")), "%" + ruoloDescrizione.toLowerCase() + "%") : null;
     }
 
     public static Specification<ScanRecord> hasData(LocalDate data) {

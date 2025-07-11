@@ -1,14 +1,12 @@
 package com.example.pomodori.controller;
 
-import java.time.LocalDate;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -38,31 +36,40 @@ public class DipendenteController {
     @Autowired
     private TipoRuoloRepository tipoRuoloRepo;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @GetMapping
     public String list(@RequestParam(required = false) String nome,
-            @RequestParam(required = false) String cognome,
-            @RequestParam(required = false) String codiceFiscale,
-            @RequestParam(required = false) String soprannome,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            Model model) {
-    	
-    	Specification<Dipendente> spec = Specification
+                       @RequestParam(required = false) String cognome,
+                       @RequestParam(required = false) String codiceFiscale,
+                       @RequestParam(required = false) String soprannome,
+                       @RequestParam(required = false) String username,
+                       @RequestParam(required = false) String ruoloDescrizione,
+                       @RequestParam(defaultValue = "0") int page,
+                       @RequestParam(defaultValue = "10") int size,
+                       Model model) {
+
+        Specification<Dipendente> spec = Specification
                 .where(DipendenteSpecification.hasNome(nome))
                 .and(DipendenteSpecification.hasCognome(cognome))
                 .and(DipendenteSpecification.hasCodiceFiscale(codiceFiscale))
-                .and(DipendenteSpecification.hasSoprannome(soprannome));
-    	
-    	Pageable pageable = PageRequest.of(page, size, Sort.by("cognome").descending());
+                .and(DipendenteSpecification.hasSoprannome(soprannome))
+        		.and(DipendenteSpecification.hasUsername(username))
+        		.and(DipendenteSpecification.hasRuolo(ruoloDescrizione));
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("cognome").descending());
         Page<Dipendente> resultPage = dipendenteRepo.findAll(spec, pageable);
-    	
-    	model.addAttribute("dipendenti", resultPage.getContent());
+
+        model.addAttribute("dipendenti", resultPage.getContent());
         model.addAttribute("page", resultPage);
         model.addAttribute("size", size);
         model.addAttribute("nome", nome);
         model.addAttribute("cognome", cognome);
         model.addAttribute("codiceFiscale", codiceFiscale);
         model.addAttribute("soprannome", soprannome);
+        model.addAttribute("tipoRuolo.descrizione", ruoloDescrizione);
+        model.addAttribute("username", username);
         return "dipendente-list";
     }
 
@@ -87,9 +94,9 @@ public class DipendenteController {
         dip.setNome(dto.getNome());
         dip.setCognome(dto.getCognome());
         dip.setCodiceFiscale(dto.getCodiceFiscale());
-        if (dto.getSoprannome() != null && !dto.getSoprannome().isBlank()) {
-        	dip.setSoprannome(dto.getSoprannome());
-        }
+        dip.setSoprannome(dto.getSoprannome());
+        dip.setUsername(dto.getUsername());
+        dip.setPasswordHash(passwordEncoder.encode(dto.getPassword()));
 
         TipoRuolo ruolo = tipoRuoloRepo.findById(dto.getTipoRuoloId())
                 .orElseThrow(() -> new IllegalArgumentException("Ruolo non trovato"));
@@ -109,10 +116,9 @@ public class DipendenteController {
         dto.setNome(dip.getNome());
         dto.setCognome(dip.getCognome());
         dto.setCodiceFiscale(dip.getCodiceFiscale());
+        dto.setSoprannome(dip.getSoprannome());
+        dto.setUsername(dip.getUsername());
         dto.setTipoRuoloId(dip.getTipoRuolo().getId());
-        if (dip.getSoprannome() != null && !dip.getSoprannome().isBlank()) {
-        	dto.setSoprannome(dip.getSoprannome());
-        }
 
         model.addAttribute("dipendenteDto", dto);
         model.addAttribute("listaRuoli", tipoRuoloRepo.findAll());
@@ -139,8 +145,10 @@ public class DipendenteController {
         dip.setNome(dto.getNome());
         dip.setCognome(dto.getCognome());
         dip.setCodiceFiscale(dto.getCodiceFiscale());
-        if (dto.getSoprannome() != null && !dto.getSoprannome().isBlank()) {
-        	dip.setSoprannome(dto.getSoprannome());
+        dip.setSoprannome(dto.getSoprannome());
+
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+            dip.setPasswordHash(passwordEncoder.encode(dto.getPassword()));
         }
 
         TipoRuolo ruolo = tipoRuoloRepo.findById(dto.getTipoRuoloId())

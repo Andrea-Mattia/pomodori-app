@@ -14,6 +14,9 @@ public class ScanRecord {
 	private Long id;
 
 	@NotBlank
+	private String username;
+	
+	@NotBlank
 	private String nome;
 
 	@NotBlank
@@ -24,11 +27,24 @@ public class ScanRecord {
 
 	@NotBlank
 	private String qrCode;
+	
+	private String soprannome;
+	
+	@NotBlank
+	private String ruoloDescrizione;
 
 	private LocalDateTime scanTime;
-
+	
 	public ScanRecord() {
 		this.scanTime = LocalDateTime.now(ZoneId.of("Europe/Rome"));
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public Long getId() {
@@ -69,6 +85,22 @@ public class ScanRecord {
 
 	public void setQrCode(String qrCode) {
 		this.qrCode = qrCode;
+	}
+
+	public String getSoprannome() {
+		return soprannome;
+	}
+
+	public void setSoprannome(String soprannome) {
+		this.soprannome = soprannome;
+	}
+
+	public String getRuoloDescrizione() {
+		return ruoloDescrizione;
+	}
+
+	public void setRuoloDescrizione(String ruoloDescrizione) {
+		this.ruoloDescrizione = ruoloDescrizione;
 	}
 
 	public LocalDateTime getScanTime() {

@@ -51,34 +51,48 @@ public class AdminController {
 
     @GetMapping("/admin")
     public String adminHome(
+            @RequestParam(required = false) String username,
             @RequestParam(required = false) String nome,
             @RequestParam(required = false) String cognome,
+            @RequestParam(required = false) String soprannome,
+            @RequestParam(required = false) String ruoloDescrizione,
             @RequestParam(required = false) String qrCode,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             Model model,
             Principal principal) {
+    	
+    	Admin admin = adminRepository.findByUsername(principal.getName()).orElse(null);
+    	
+    	if (admin != null) {
+    		Specification<ScanRecord> spec = Specification
+	            .where(ScanRecordSpecification.hasUsername(username))
+	            .and(ScanRecordSpecification.hasNome(nome))
+	            .and(ScanRecordSpecification.hasCognome(cognome))
+	            .and(ScanRecordSpecification.hasSoprannome(soprannome))
+	            .and(ScanRecordSpecification.hasRuoloDescrizione(ruoloDescrizione))
+	            .and(ScanRecordSpecification.hasQrCode(qrCode))
+	            .and(ScanRecordSpecification.hasData(data));
 
-        Specification<ScanRecord> spec = Specification
-            .where(ScanRecordSpecification.hasNome(nome))
-            .and(ScanRecordSpecification.hasCognome(cognome))
-            .and(ScanRecordSpecification.hasQrCode(qrCode))
-            .and(ScanRecordSpecification.hasData(data));
+	        Pageable pageable = PageRequest.of(page, size, Sort.by("scanTime").descending());
+	        Page<ScanRecord> resultPage = repository.findAll(spec, pageable);
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by("scanTime").descending());
-        Page<ScanRecord> resultPage = repository.findAll(spec, pageable);
-
-        model.addAttribute("records", resultPage.getContent());
-        model.addAttribute("page", resultPage);
-        model.addAttribute("size", size);
-        model.addAttribute("username", principal.getName());
-        model.addAttribute("nome", nome);
-        model.addAttribute("cognome", cognome);
-        model.addAttribute("qrCode", qrCode);
-        model.addAttribute("data", data);
-        model.addAttribute("timeoutMinutes", repo.findById(1L).map(ReportSetting::getTimeoutMinutes).orElse(10));
-        return "admin-home";
+	        model.addAttribute("records", resultPage.getContent());
+	        model.addAttribute("page", resultPage);
+	        model.addAttribute("size", size);
+	        model.addAttribute("adminUsername", admin.getUsername());
+	        model.addAttribute("username", username);
+	        model.addAttribute("nome", nome);
+	        model.addAttribute("cognome", cognome);
+	        model.addAttribute("soprannome", soprannome);
+	        model.addAttribute("ruoloDescrizione", ruoloDescrizione);
+	        model.addAttribute("qrCode", qrCode);
+	        model.addAttribute("data", data);
+	        model.addAttribute("timeoutMinutes", repo.findById(1L).map(ReportSetting::getTimeoutMinutes).orElse(10));
+    	}
+        
+        return admin != null ? "admin-home" : "redirect:/custom-login";
     }
 
 	@GetMapping("/admin/login")
@@ -99,38 +113,62 @@ public class AdminController {
 	
 	@GetMapping("/admin/export")
 	public void exportCSV(
+	        @RequestParam(required = false) String username,
 	        @RequestParam(required = false) String nome,
 	        @RequestParam(required = false) String cognome,
+	        @RequestParam(required = false) String soprannome,
+	        @RequestParam(required = false) String ruoloDescrizione,
 	        @RequestParam(required = false) String qrCode,
 	        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data,
 	        HttpServletResponse response) throws IOException {
 
 	    Specification<ScanRecord> spec = Specification
-	        .where(ScanRecordSpecification.hasNome(nome))
-	        .and(ScanRecordSpecification.hasCognome(cognome))
-	        .and(ScanRecordSpecification.hasQrCode(qrCode))
-	        .and(ScanRecordSpecification.hasData(data));
+	            .where(ScanRecordSpecification.hasUsername(username))
+	            .and(ScanRecordSpecification.hasNome(nome))
+	            .and(ScanRecordSpecification.hasCognome(cognome))
+	            .and(ScanRecordSpecification.hasSoprannome(soprannome))
+	            .and(ScanRecordSpecification.hasRuoloDescrizione(ruoloDescrizione))
+	            .and(ScanRecordSpecification.hasQrCode(qrCode))
+	            .and(ScanRecordSpecification.hasData(data));
 
 	    List<ScanRecord> records = repository.findAll(spec);
 
-	    response.setContentType("text/csv");
+	    response.setContentType("text/csv; charset=UTF-8");
 	    response.setHeader("Content-Disposition", "attachment; filename=presenze.csv");
 
 	    PrintWriter writer = response.getWriter();
-	    writer.println("Nome,Cognome,Codice Fiscale,QR Code,Data,Ora");
+
+	    // Header
+	    writer.println("Username;Nome;Cognome;Soprannome;Ruolo;Codice Fiscale;QR Code;Data;Ora");
+
 	    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 	    DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
 	    for (ScanRecord r : records) {
-	        writer.printf("%s,%s,%s,%s,%s,%s%n",
-	            r.getNome(),
-	            r.getCognome(),
-	            r.getCodiceFiscale() != null ? r.getCodiceFiscale() : "",
-	            r.getQrCode(),
-	            r.getScanTime().toLocalDate().format(dateFormatter),
-	            r.getScanTime().toLocalTime().format(timeFormatter));
+	        writer.printf("%s;%s;%s;%s;%s;%s;%s;%s;%s%n",
+	                csvSafe(r.getUsername()),
+	                csvSafe(r.getNome()),
+	                csvSafe(r.getCognome()),
+	                csvSafe(r.getSoprannome() != null ? r.getSoprannome() : ""),
+	                csvSafe(r.getRuoloDescrizione()),
+	                csvSafe(r.getCodiceFiscale() != null ? r.getCodiceFiscale() : ""),
+	                csvSafe(r.getQrCode()),
+	                r.getScanTime().toLocalDate().format(dateFormatter),
+	                r.getScanTime().toLocalTime().format(timeFormatter)
+	        );
 	    }
+
+	    writer.flush();
+	    writer.close();
 	}
+
+	// Utilità per quotare correttamente valori con caratteri speciali
+	private String csvSafe(String value) {
+	    if (value == null) return "";
+	    String escaped = value.replace("\"", "\"\"");
+	    return "\"" + escaped + "\"";
+	}
+
 	
 	@GetMapping("/admin/settings")
     public String showSettings(Model model) {

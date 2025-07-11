@@ -41,6 +41,7 @@
 					<tr>
 						<th>Nome</th>
 						<th>Cognome</th>
+						<th>Username</th>
 						<th>Codice Fiscale</th>
 						<th>Soprannome</th>
 						<th>Ruolo</th>
@@ -51,6 +52,7 @@
 					<tr th:each="d : ${dipendenti}">
 						<td th:text="${d.nome}"></td>
 						<td th:text="${d.cognome}"></td>
+						<td th:text="${d.username}"></td>
 						<td th:text="${d.codiceFiscale}"></td>
 						<td th:text="${d.soprannome}"></td>
 						<td th:text="${d.tipoRuolo.descrizione}"></td>
@@ -73,6 +75,7 @@
 						<div class="card-body">
 							<h5 class="card-title" th:text="${d.nome} + ' ' + ${d.cognome}"></h5>
 							<p class="card-text mb-1">
+								<strong>Username:</strong> <span th:text="${d.username}"></span><br />
 								<strong>CF:</strong> <span th:text="${d.codiceFiscale}"></span><br />
 								<strong>Soprannome:</strong> <span th:text="${d.soprannome}"></span><br />
 								<strong>Ruolo:</strong> <span

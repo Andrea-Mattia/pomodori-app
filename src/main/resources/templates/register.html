@@ -8,7 +8,7 @@
 	<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
 </head>
 <body class="container py-5">
-	<div class="mobile-container">
+	<div class="mobile-container max-width-mobile">
 		<h2>Registrazione Admin</h2>
 
 		<form th:action="@{/register}" th:object="${adminDto}" method="post"

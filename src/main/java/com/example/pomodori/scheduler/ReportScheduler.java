@@ -59,7 +59,7 @@ public class ReportScheduler {
             .collect(Collectors.toList());
 
         if (!recentRecords.isEmpty()) {
-            StringBuilder csv = new StringBuilder("Nome,Cognome,Codice Fiscale,QR Code,Data,Ora\n");
+            StringBuilder csv = new StringBuilder("Username,Nome,Cognome,Soprannome,Ruolo,Codice Fiscale,QR Code,Data,Ora\n");
             
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     		DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
@@ -67,8 +67,12 @@ public class ReportScheduler {
             for (ScanRecord r : recentRecords) {
             	String data = r.getScanTime().toLocalDate().format(dateFormatter);
     		    String ora = r.getScanTime().toLocalTime().format(timeFormatter);
-                csv.append(String.format("%s,%s,%s,%s,%s,%s%n",
-                    r.getNome(), r.getCognome(),
+                csv.append(String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s%n",
+                	r.getUsername(),
+                    r.getNome(), 
+                    r.getCognome(),
+                    r.getSoprannome() != null ? r.getSoprannome() : "",
+                    r.getRuoloDescrizione(),
                     r.getCodiceFiscale() != null ? r.getCodiceFiscale() : "",
                     r.getQrCode(),
                     data,

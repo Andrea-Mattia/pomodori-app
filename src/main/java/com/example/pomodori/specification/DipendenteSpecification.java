@@ -25,5 +25,20 @@ public class DipendenteSpecification {
     	return (root, query, cb) ->
     	soprannome != null && !soprannome.isBlank() ? cb.like(cb.lower(root.get("soprannome")), "%" + soprannome.toLowerCase() + "%") : null;
     }
+    
+    public static Specification<Dipendente> hasUsername(String username) {
+    	return (root, query, cb) ->
+    	username != null && !username.isBlank() ? cb.like(cb.lower(root.get("username")), "%" + username.toLowerCase() + "%") : null;
+    }
+    
+    public static Specification<Dipendente> hasRuolo(String ruoloDescrizione) {
+        return (root, query, cb) -> {
+            if (ruoloDescrizione != null && !ruoloDescrizione.isBlank()) {
+                return cb.like(cb.lower(root.join("tipoRuolo").get("descrizione")), "%" + ruoloDescrizione.toLowerCase() + "%");
+            }
+            return null;
+        };
+    }
+
 }
 

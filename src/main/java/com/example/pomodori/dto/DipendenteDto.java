@@ -16,6 +16,12 @@ public class DipendenteDto {
     private String soprannome;
     
     private Long tipoRuoloId;
+    
+    @NotBlank
+    private String username;
+
+    @NotBlank
+    private String password;
 
 	public String getNome() {
 		return nome;
@@ -55,6 +61,22 @@ public class DipendenteDto {
 
 	public void setTipoRuoloId(Long tipoRuoloId) {
 		this.tipoRuoloId = tipoRuoloId;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 }
