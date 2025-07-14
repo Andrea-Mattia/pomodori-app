@@ -65,6 +65,15 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function startScanner() {
+  const scanButton = document.getElementById('startScannerButton');
+  const scanSpinner = document.getElementById('scanSpinner');
+  const scanButtonText = document.getElementById('scanButtonText');
+
+  // Disabilita bottone e mostra spinner
+  scanButton.disabled = true;
+  scanSpinner.classList.remove('d-none');
+  scanButtonText.textContent = 'Apertura fotocamera...';
+
   const qrReader = new Html5Qrcode("qr-reader");
 
   qrReader.start(
@@ -78,19 +87,29 @@ function startScanner() {
         const params = new URLSearchParams(url.search);
         qrValue = params.get("qr") || qrCodeMessage;
       } catch (e) {
-        // non URL, va bene così
+        // Non è un URL, va bene comunque
       }
 
-      window.location.href = `/scan?qr=${encodeURIComponent(qrValue)}`;
-      qrReader.stop();
+      qrReader.stop().then(() => {
+        resetScannerButton();
+        window.location.href = `/scan?qr=${encodeURIComponent(qrValue)}`;
+      });
     },
     errorMessage => {
-      // puoi ignorare
+      // Ignora errori temporanei
     }
   ).catch(err => {
     alert("Impossibile accedere alla fotocamera: " + err);
+    resetScannerButton();
   });
+
+  function resetScannerButton() {
+    scanButton.disabled = false;
+    scanSpinner.classList.add('d-none');
+    scanButtonText.textContent = 'Avvia fotocamera';
+  }
 }
+
 
 
 //modale elimina dipendente
@@ -110,3 +129,10 @@ window.openDeleteModal = function(button) {
     confirmBtn.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Eliminazione...`;
   };
 };
+
+//service worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+    .then(() => console.log('Service Worker registrato'))
+    .catch(console.error);
+}

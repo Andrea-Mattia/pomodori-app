@@ -17,6 +17,7 @@ import com.example.pomodori.entity.ScanRecord;
 import com.example.pomodori.repository.DipendenteRepository;
 import com.example.pomodori.repository.ScanRecordRepository;
 
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 @Controller
@@ -33,7 +34,7 @@ public class ScanController {
     
     @GetMapping("/")
     public String getHomePage() {
-    	return "redirect:/home";
+    	return "forward:/home";
     }
     
     @GetMapping("/home")
@@ -41,10 +42,10 @@ public class ScanController {
     	if (principal != null) {
     		Dipendente dip = dipendenteRepository.findByUsername(principal.getName()).orElse(null);
         	if (dip == null) {
-        		return "redirect:/dipendente/login?error";
+        		return "forward:/dipendente/login?error";
         	}
     	} else {
-    		return "redirect:/dipendente/login";
+    		return "forward:/dipendente/login";
     	}
     	
         return "home";
@@ -56,26 +57,43 @@ public class ScanController {
     }
     
     @GetMapping("/scan")
-    public String scanForm(@RequestParam(name = "qr", required = false) String qr, Principal principal, Model model) {
+    public String scanForm(@RequestParam(name = "qr", required = false) String qr, 
+                           Principal principal, 
+                           HttpSession session,
+                           Model model) {
+        if (qr != null) {
+            session.setAttribute("qrCode", qr);
+            return "forward:/scan";
+        }
+
+        String sessionQr = (String) session.getAttribute("qrCode");
+        if (sessionQr == null) {
+            return "forward:/home?error";
+        }
+
         Dipendente dip = dipendenteRepository.findByUsername(principal.getName()).orElseThrow();
+
         ScanRecordDto dto = new ScanRecordDto();
         dto.setUsername(dip.getUsername());
         dto.setNome(dip.getNome());
         dto.setCognome(dip.getCognome());
         dto.setCodiceFiscale(dip.getCodiceFiscale());
-        if (dip.getSoprannome() != null) {
-        	dto.setSoprannome(dip.getSoprannome());
-        }
         dto.setRuoloDescrizione(dip.getTipoRuolo().getDescrizione());
-        dto.setQrCode(qr);
+        dto.setQrCode(sessionQr);
+        if (dip.getSoprannome() != null) {
+            dto.setSoprannome(dip.getSoprannome());
+        }
+
         model.addAttribute("scanRecordDto", dto);
         return "scan-form";
     }
 
+
     @PostMapping("/scan")
     public String saveScan(@Valid @ModelAttribute("scanRecordDto") ScanRecordDto dto,
                            BindingResult bindingResult,
-                           Model model) {
+                           Model model,
+                           HttpSession session) {
         if (bindingResult.hasErrors()) {
             return "scan-form";
         }
@@ -92,9 +110,9 @@ public class ScanController {
         entity.setRuoloDescrizione(dto.getRuoloDescrizione());
 
         repository.save(entity);
-        
+        session.removeAttribute("qrCode");
 //        emailService.sendPresenceNotification(entity.getNome(), entity.getCognome(), entity.getQrCode());
         
-        return "scan-form";
+        return "forward:/home?success";
     }
 }

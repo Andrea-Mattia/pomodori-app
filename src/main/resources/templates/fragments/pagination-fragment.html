@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<link rel="manifest" href="/manifest.json">
+	<meta name="theme-color" content="#0d6efd">
+</head>
 <body>
   <div th:fragment="pagination(baseUrl, pageObj, hiddenFieldsFragment)">
     <nav th:if="${pageObj.totalPages > 1}">
