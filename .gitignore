@@ -32,3 +32,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Java keystore
+keystore.p12

@@ -34,6 +34,13 @@ report:
     cron: ${REPORT_SCHEDULE_CRON}
 
 server:
+  port: 8080
+  ssl:
+    enabled: true
+    key-store: classpath:keystore.p12
+    key-store-password: password
+    key-store-type: PKCS12
+    key-alias: pomodori-local
   servlet:
     session:
       timeout: 30m
