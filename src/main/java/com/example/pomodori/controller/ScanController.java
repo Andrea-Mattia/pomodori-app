@@ -34,7 +34,7 @@ public class ScanController {
     
     @GetMapping("/")
     public String getHomePage() {
-    	return "forward:/home";
+    	return "redirect:/home";
     }
     
     @GetMapping("/home")
@@ -42,10 +42,10 @@ public class ScanController {
     	if (principal != null) {
     		Dipendente dip = dipendenteRepository.findByUsername(principal.getName()).orElse(null);
         	if (dip == null) {
-        		return "forward:/dipendente/login?error";
+        		return "redirect:/dipendente/login?error";
         	}
     	} else {
-    		return "forward:/dipendente/login";
+    		return "redirect:/dipendente/login";
     	}
     	
         return "home";
@@ -63,12 +63,12 @@ public class ScanController {
                            Model model) {
         if (qr != null) {
             session.setAttribute("qrCode", qr);
-            return "forward:/scan";
+            return "redirect:/scan";
         }
 
         String sessionQr = (String) session.getAttribute("qrCode");
         if (sessionQr == null) {
-            return "forward:/home?error";
+            return "redirect:/home?error";
         }
 
         Dipendente dip = dipendenteRepository.findByUsername(principal.getName()).orElseThrow();
@@ -113,6 +113,6 @@ public class ScanController {
         session.removeAttribute("qrCode");
 //        emailService.sendPresenceNotification(entity.getNome(), entity.getCognome(), entity.getQrCode());
         
-        return "forward:/home?success";
+        return "redirect:/home?success";
     }
 }
