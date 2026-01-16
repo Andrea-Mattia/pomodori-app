@@ -61,6 +61,12 @@
   			<groupId>org.postgresql</groupId>
   			<artifactId>postgresql</artifactId>
 		</dependency>
+		
+		<!-- OracleDB -->
+		<dependency>
+			<groupId>com.oracle.database.jdbc</groupId>
+			<artifactId>ojdbc8</artifactId>
+		</dependency>
 
         <!-- Validation API -->
         <dependency>

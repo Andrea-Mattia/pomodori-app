@@ -1,6 +1,12 @@
-INSERT INTO public.tipo_ruolo (codice, descrizione) VALUES('1', 'Gancio');
-INSERT INTO public.tipo_ruolo (codice, descrizione) VALUES('2', 'Gira teste');
-INSERT INTO public.tipo_ruolo (codice, descrizione) VALUES('3', 'Sfogliatura');
-INSERT INTO public.tipo_ruolo (codice, descrizione) VALUES('4', 'Femminelle');
-INSERT INTO public.tipo_ruolo (codice, descrizione) VALUES('5', 'Fiori');
-INSERT INTO public.tipo_ruolo (codice, descrizione) VALUES('6', 'Raccolta');
+INSERT INTO pomodori_db_user.tipo_ruolo (codice, descrizione) VALUES('1', 'Gancio');
+INSERT INTO pomodori_db_user.tipo_ruolo (codice, descrizione) VALUES('2', 'Gira teste');
+INSERT INTO pomodori_db_user.tipo_ruolo (codice, descrizione) VALUES('3', 'Sfogliatura');
+INSERT INTO pomodori_db_user.tipo_ruolo (codice, descrizione) VALUES('4', 'Femminelle');
+INSERT INTO pomodori_db_user.tipo_ruolo (codice, descrizione) VALUES('5', 'Fiori');
+INSERT INTO pomodori_db_user.tipo_ruolo (codice, descrizione) VALUES('6', 'Raccolta');
+--INSERT INTO public.tipo_ruolo (codice, descrizione) VALUES('1', 'Gancio');
+--INSERT INTO public.tipo_ruolo (codice, descrizione) VALUES('2', 'Gira teste');
+--INSERT INTO public.tipo_ruolo (codice, descrizione) VALUES('3', 'Sfogliatura');
+--INSERT INTO public.tipo_ruolo (codice, descrizione) VALUES('4', 'Femminelle');
+--INSERT INTO public.tipo_ruolo (codice, descrizione) VALUES('5', 'Fiori');
+--INSERT INTO public.tipo_ruolo (codice, descrizione) VALUES('6', 'Raccolta');

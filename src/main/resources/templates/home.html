@@ -17,6 +17,7 @@
         <div class="mobile-container max-width-mobile text-center">
         	<div th:if="${param.success}" class="alert alert-success">Registrazione avvenuta con successo!</div>
         	<div th:if="${param.error}" class="alert alert-danger">Qr Code non valido o assente! Esegui una nuova scansione!</div>
+        	<div th:if="${param.offlineSaved}" class="alert alert-warning">Sei offline. La tua presenza è stata salvata e sarà inviata automaticamente appena torni online.</div>
         	<h1 class="mb-4">Benvenuto</h1>
 	        <p class="lead">Premi il pulsante per scansionare il QR code</p>
 		

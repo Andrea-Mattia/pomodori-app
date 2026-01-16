@@ -23,15 +23,25 @@ public class WebSecurityConfig {
     }
 
     @Bean
+    @Order(1)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+        	.securityMatcher("/admin/**", "/custom-login", "/logout", "/register")
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/trigger-report").permitAll()
+                .requestMatchers(
+                    "/sw.js",
+                    "/manifest.json",
+                    "/icons/**",
+                    "/css/**",
+                    "/js/**",
+                    "/images/**",
+                    "/api/trigger-report"
+                ).permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().permitAll()
             )
             .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/api/trigger-report") // 🔥 DISABILITA CSRF SOLO QUI
+                .ignoringRequestMatchers("/api/trigger-report")
             )
             .formLogin(form -> form
                 .loginPage("/custom-login")
@@ -48,15 +58,16 @@ public class WebSecurityConfig {
 
         return http.build();
     }
-    
+
     @Bean
     @Order(2)
     public SecurityFilterChain dipendenteSecurity(HttpSecurity http) throws Exception {
         http
-            .securityMatcher("/scan", "/scan/**", "/dipendente/**")
+            .securityMatcher("/dipendente/**", "/scan", "/scan/**")
             .authorizeHttpRequests(auth -> auth
-            		.requestMatchers("/dipendente/login").permitAll()
-            		.anyRequest().authenticated())
+                .requestMatchers("/dipendente/login").permitAll()
+                .anyRequest().authenticated()
+            )
             .formLogin(form -> form
                 .loginPage("/dipendente/login")
                 .loginProcessingUrl("/dipendente/login")
@@ -71,7 +82,6 @@ public class WebSecurityConfig {
 
         return http.build();
     }
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {
