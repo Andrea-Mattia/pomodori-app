@@ -122,7 +122,7 @@ public class ScanController {
     
     @PostMapping(value = "/scan", consumes = "application/json")
     @ResponseBody
-    public ResponseEntity<String> saveScanOffline(@RequestBody ScanRecordDto dto) {
+    public ResponseEntity<String> saveScanOffline(@Valid @RequestBody ScanRecordDto dto) {
         ScanRecord entity = new ScanRecord();
         entity.setUsername(dto.getUsername());
         entity.setNome(dto.getNome());

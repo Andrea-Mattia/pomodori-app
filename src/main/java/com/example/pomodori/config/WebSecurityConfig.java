@@ -24,32 +24,46 @@ public class WebSecurityConfig {
     }
 
     @Bean
+    @Order(0)
+    public SecurityFilterChain publicResources(HttpSecurity http) throws Exception {
+        http
+            .securityMatchers(matchers -> matchers.requestMatchers(
+                AntPathRequestMatcher.antMatcher("/sw.js"),
+                AntPathRequestMatcher.antMatcher("/manifest.json"),
+                AntPathRequestMatcher.antMatcher("/icons/**"),
+                AntPathRequestMatcher.antMatcher("/css/**"),
+                AntPathRequestMatcher.antMatcher("/js/**"),
+                AntPathRequestMatcher.antMatcher("/images/**"),
+                AntPathRequestMatcher.antMatcher("/sounds/**"),
+                AntPathRequestMatcher.antMatcher("/h2-console/**"),
+                AntPathRequestMatcher.antMatcher("/favicon.ico")
+            ))
+            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+            .csrf(csrf -> csrf.disable())
+            .headers(headers -> headers.frameOptions(frame -> frame.disable())); // Per H2 Console
+
+        return http.build();
+    }
+
+    @Bean
     @Order(1)
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain adminSecurity(HttpSecurity http) throws Exception {
         http
             .securityMatchers(matchers -> matchers.requestMatchers(
                 AntPathRequestMatcher.antMatcher("/admin/**"), 
                 AntPathRequestMatcher.antMatcher("/custom-login"), 
                 AntPathRequestMatcher.antMatcher("/logout"), 
-                AntPathRequestMatcher.antMatcher("/register")
+                AntPathRequestMatcher.antMatcher("/register"),
+                AntPathRequestMatcher.antMatcher("/api/trigger-report")
             ))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                    AntPathRequestMatcher.antMatcher("/sw.js"),
-                    AntPathRequestMatcher.antMatcher("/manifest.json"),
-                    AntPathRequestMatcher.antMatcher("/icons/**"),
-                    AntPathRequestMatcher.antMatcher("/css/**"),
-                    AntPathRequestMatcher.antMatcher("/js/**"),
-                    AntPathRequestMatcher.antMatcher("/images/**"),
-                    AntPathRequestMatcher.antMatcher("/api/trigger-report")
-                ).permitAll()
+                .requestMatchers(AntPathRequestMatcher.antMatcher("/api/trigger-report")).permitAll()
                 .requestMatchers(AntPathRequestMatcher.antMatcher("/admin/**")).hasRole("ADMIN")
                 .anyRequest().permitAll()
             )
             .csrf(csrf -> csrf
                 .ignoringRequestMatchers(
-                    AntPathRequestMatcher.antMatcher("/api/trigger-report"),
-                    AntPathRequestMatcher.antMatcher("/scan")
+                    AntPathRequestMatcher.antMatcher("/api/trigger-report")
                 )
             )
             .formLogin(form -> form
@@ -81,6 +95,11 @@ public class WebSecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(AntPathRequestMatcher.antMatcher("/dipendente/login")).permitAll()
                 .anyRequest().authenticated()
+            )
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers(
+                    AntPathRequestMatcher.antMatcher("/scan")
+                )
             )
             .formLogin(form -> form
                 .loginPage("/dipendente/login")

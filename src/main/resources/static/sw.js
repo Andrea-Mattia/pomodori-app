@@ -77,8 +77,9 @@ self.addEventListener('fetch', event => {
           await self.registration.sync.register('sync-scans');
         }
 
-        return new Response(JSON.stringify({ success: false, offline: true }), {
-          headers: { 'Content-Type': 'application/json' }
+        return new Response(null, {
+          status: 302,
+          headers: { 'Location': '/home?offlineSaved=true' }
         });
       })
     );
