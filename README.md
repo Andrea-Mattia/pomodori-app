@@ -8,6 +8,35 @@ e gestione dei dipendenti (registrazione, modifica, eliminazione).
 
 ---
 
+## 🚀 Avvio Locale (Testing)
+
+Per testare l'applicazione sul tuo computer senza dover configurare Oracle o PostgreSQL:
+
+1. **Prerequisiti**: Java 21 installato.
+2. **Esecuzione**: Apri il terminale nella root del progetto e lancia:
+   ```bash
+   ./mvnw spring-boot:run -Dspring-boot.run.profiles=local
+   ```
+3. **Database H2**: 
+   - L'applicazione userà un database in memoria (H2).
+   - Puoi accedere alla console H2 su: `http://localhost:8080/h2-console`
+   - JDBC URL: `jdbc:h2:mem:pomodoridb` | User: `sa` | Pass: `password`
+4. **Login iniziale**:
+   - Vai su `http://localhost:8080/register` per creare il primo account Amministratore.
+   - Per i dipendenti, una volta loggato come admin, potrai registrarli dalla sezione "Gestione Dipendenti".
+
+## 📱 Test PWA e Offline
+
+- **Localhost**: I Service Worker funzionano su `localhost` anche senza HTTPS.
+- **Mobile**: Per installarla sul telefono o testare l'offline REALE servirebbe HTTPS. Ho predisposto la configurazione SSL in `application-local.yml` (attualmente commentata) che richiede un file `keystore.p12`.
+- **Funzionamento Offline**: 
+  - Effettua il login come dipendente mentre sei online.
+  - Spegni la connessione.
+  - Scansiona un QR (es. `https://esempio.it?qr=VALORE`).
+  - L'app salverà i dati localmente e li invierà al server non appena riaccenderai la rete.
+
+---
+
 ## 🧰 Stack Tecnologico
 
 - **Backend**: Java 21 + Spring Boot 3.3.x

@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.example.pomodori.service.AdminDetailsService;
 import com.example.pomodori.service.DipendenteDetailsService;
@@ -23,15 +24,33 @@ public class WebSecurityConfig {
     }
 
     @Bean
+    @Order(1)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+            .securityMatchers(matchers -> matchers.requestMatchers(
+                AntPathRequestMatcher.antMatcher("/admin/**"), 
+                AntPathRequestMatcher.antMatcher("/custom-login"), 
+                AntPathRequestMatcher.antMatcher("/logout"), 
+                AntPathRequestMatcher.antMatcher("/register")
+            ))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/trigger-report").permitAll()
-                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers(
+                    AntPathRequestMatcher.antMatcher("/sw.js"),
+                    AntPathRequestMatcher.antMatcher("/manifest.json"),
+                    AntPathRequestMatcher.antMatcher("/icons/**"),
+                    AntPathRequestMatcher.antMatcher("/css/**"),
+                    AntPathRequestMatcher.antMatcher("/js/**"),
+                    AntPathRequestMatcher.antMatcher("/images/**"),
+                    AntPathRequestMatcher.antMatcher("/api/trigger-report")
+                ).permitAll()
+                .requestMatchers(AntPathRequestMatcher.antMatcher("/admin/**")).hasRole("ADMIN")
                 .anyRequest().permitAll()
             )
             .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/api/trigger-report") // 🔥 DISABILITA CSRF SOLO QUI
+                .ignoringRequestMatchers(
+                    AntPathRequestMatcher.antMatcher("/api/trigger-report"),
+                    AntPathRequestMatcher.antMatcher("/scan")
+                )
             )
             .formLogin(form -> form
                 .loginPage("/custom-login")
@@ -48,15 +67,21 @@ public class WebSecurityConfig {
 
         return http.build();
     }
-    
+
     @Bean
     @Order(2)
     public SecurityFilterChain dipendenteSecurity(HttpSecurity http) throws Exception {
         http
-            .securityMatcher("/scan", "/scan/**", "/dipendente/**")
+            .securityMatchers(matchers -> matchers.requestMatchers(
+                AntPathRequestMatcher.antMatcher("/dipendente/**"), 
+                AntPathRequestMatcher.antMatcher("/scan"), 
+                AntPathRequestMatcher.antMatcher("/scan/**"),
+                AntPathRequestMatcher.antMatcher("/home")
+            ))
             .authorizeHttpRequests(auth -> auth
-            		.requestMatchers("/dipendente/login").permitAll()
-            		.anyRequest().authenticated())
+                .requestMatchers(AntPathRequestMatcher.antMatcher("/dipendente/login")).permitAll()
+                .anyRequest().authenticated()
+            )
             .formLogin(form -> form
                 .loginPage("/dipendente/login")
                 .loginProcessingUrl("/dipendente/login")
@@ -71,7 +96,6 @@ public class WebSecurityConfig {
 
         return http.build();
     }
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {

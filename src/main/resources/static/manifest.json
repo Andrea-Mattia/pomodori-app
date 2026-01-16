@@ -1,6 +1,7 @@
 {
   "name": "Raccolta Pomodori",
   "short_name": "Pomodori",
+  "description": "App per la gestione delle presenze e raccolta pomodori",
   "start_url": "/home",
   "display": "standalone",
   "background_color": "#ffffff",

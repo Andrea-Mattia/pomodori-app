@@ -1,5 +1,59 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:pomodoridb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USER}
+    password: ${MAIL_APP_PWD}
+    from: ${MAIL_FROM}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        default_schema: PUBLIC
+        show_sql: true
+  sql:
+    init:
+      mode: never
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+report:
+  schedule:
+    cron: ${REPORT_SCHEDULE_CRON}
+  trigger:
+    token: ${REPORT_TRIGGER_TOKEN}
+
+REPORT_TRIGGER_TOKEN: "5f584149-ec72-47a0-8e97-bae4919605fb"
+MAIL_USER: "andrea.mattia94@gmail.com"
+MAIL_APP_PWD: "wpik dkuf mkkb jgpp"
+MAIL_FROM: "andrea.mattia94@gmail.com"
+DB_URL: jdbc:h2:mem:pomodoridb
+DB_USER: sa
+DB_PASS: password
+REPORT_SCHEDULE_CRON: "0 30 18 * * *"
+
 server:
-  port: 8080
+  port: 8443
   ssl:
     enabled: true
     key-store: classpath:keystore.p12

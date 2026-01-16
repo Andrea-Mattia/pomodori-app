@@ -1,7 +1,10 @@
 package com.example.pomodori.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.validation.constraints.NotBlank;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ScanRecordDto {
 
 	@NotBlank(message = "Lo username è obbligatorio")

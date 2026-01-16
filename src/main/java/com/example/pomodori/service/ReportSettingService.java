@@ -23,6 +23,9 @@ public class ReportSettingService {
 			defaultSetting.setAdminEmail(admin.getEmail());
 			defaultSetting.setTimeoutMinutes(15);
 			settingRepository.save(defaultSetting);
+		} else if (setting.getAdminEmail() == null || setting.getAdminEmail().isBlank()) {
+			setting.setAdminEmail(admin.getEmail());
+			settingRepository.save(setting);
 		}
 	}
 }

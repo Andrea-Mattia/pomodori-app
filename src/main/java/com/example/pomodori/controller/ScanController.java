@@ -3,13 +3,16 @@ package com.example.pomodori.controller;
 import java.security.Principal;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.pomodori.dto.ScanRecordDto;
 import com.example.pomodori.entity.Dipendente;
@@ -38,12 +41,13 @@ public class ScanController {
     }
     
     @GetMapping("/home")
-    public String home(Principal principal) {
+    public String home(Principal principal, Model model) {
     	if (principal != null) {
     		Dipendente dip = dipendenteRepository.findByUsername(principal.getName()).orElse(null);
         	if (dip == null) {
         		return "redirect:/dipendente/login?error";
         	}
+            model.addAttribute("dipendente", dip);
     	} else {
     		return "redirect:/dipendente/login";
     	}
@@ -115,4 +119,23 @@ public class ScanController {
         
         return "redirect:/home?success";
     }
+    
+    @PostMapping(value = "/scan", consumes = "application/json")
+    @ResponseBody
+    public ResponseEntity<String> saveScanOffline(@RequestBody ScanRecordDto dto) {
+        ScanRecord entity = new ScanRecord();
+        entity.setUsername(dto.getUsername());
+        entity.setNome(dto.getNome());
+        entity.setCognome(dto.getCognome());
+        entity.setCodiceFiscale(dto.getCodiceFiscale());
+        entity.setQrCode(dto.getQrCode());
+        if (dto.getSoprannome() != null) {
+            entity.setSoprannome(dto.getSoprannome());
+        }
+        entity.setRuoloDescrizione(dto.getRuoloDescrizione());
+
+        repository.save(entity);
+        return ResponseEntity.ok("Salvato offline");
+    }
+
 }
