@@ -1,18 +1,15 @@
 importScripts('https://unpkg.com/idb@7/build/iife/index-min.js');
 
-const CACHE_NAME = 'pomodori-cache-v4';
+const CACHE_NAME = 'pomodori-cache-v11';
 const STORE_NAME = 'offline-scans';
 
-// ⚙️ Lista delle risorse da precaricare (cache statica) - Include bootstrap e risorse scan
+// ⚙️ Lista delle risorse da precaricare (cache statica) - Usiamo solo URL locali per ora
 const PRECACHE_URLS = [
   '/',
   '/home',
   '/scan',
   '/custom-login',
   '/dipendente/login',
-  '/admin',
-  '/admin/dipendenti',
-  '/admin/settings',
   '/css/style.css',
   '/js/script.js',
   '/js/session-timeout.js',
@@ -20,28 +17,32 @@ const PRECACHE_URLS = [
   '/manifest.json',
   '/icons/android-chrome-192x192.png',
   '/icons/android-chrome-512x512.png',
-  'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css',
-  'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js',
-  'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css'
+  '/icons/apple-touch-icon.png'
 ];
 
-// Install: cache statica
+// Install: cache statica individuale
 self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(PRECACHE_URLS))
-  );
   self.skipWaiting();
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(async cache => {
+      for (const url of PRECACHE_URLS) {
+        try {
+          const response = await fetch(url);
+          if (response.ok) await cache.put(url, response);
+        } catch (e) {
+          console.warn(`Precache fallito per ${url}:`, e);
+        }
+      }
+    })
+  );
 });
 
 // Activate: pulizia vecchie cache
 self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.filter(name => name !== CACHE_NAME)
-          .map(name => caches.delete(name))
-      );
-    })
+    caches.keys().then(keys => Promise.all(
+      keys.map(key => key !== CACHE_NAME ? caches.delete(key) : null)
+    ))
   );
   self.clients.claim();
 });
@@ -60,80 +61,80 @@ self.addEventListener('fetch', event => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // 🔄 Salva POST /scan se offline
-  if (request.method === 'POST' && url.pathname.endsWith('/scan')) {
+  if (!url.protocol.startsWith('http')) return;
+
+  // 🔄 Logout offline
+  if (LOGOUT_URLS.some(p => url.pathname.endsWith(p))) {
     event.respondWith(
       fetch(request).catch(async () => {
-        const formData = await request.clone().formData();
-        const json = {};
-        for (const [key, value] of formData.entries()) {
-          json[key] = value;
-        }
-
-        const db = await dbPromise;
-        await db.add(STORE_NAME, json);
-
-        if (self.registration.sync) {
-          await self.registration.sync.register('sync-scans');
-        }
-
-        return new Response(null, {
-          status: 302,
-          headers: { 'Location': '/home?offlineSaved=true' }
-        });
+        const loginPath = url.pathname.includes('dipendente') ? '/dipendente/login' : '/custom-login';
+        const cached = await caches.match(loginPath) || await caches.match('/');
+        return cached || new Response('Offline', { status: 200 });
       })
     );
     return;
   }
 
-  // Strategia differenziata:
-  // 1. Navigation/HTML -> Network falling back to cache
-  // 2. Static Assets -> Cache first falling back to network
+  // 🔄 POST /scan offline
+  if (request.method === 'POST' && url.pathname.endsWith('/scan')) {
+    event.respondWith(
+      fetch(request.clone()).catch(async () => {
+        const formData = await request.clone().formData();
+        const json = {};
+        for (const [key, value] of formData.entries()) json[key] = value;
+        const db = await dbPromise;
+        await db.add(STORE_NAME, json);
+        return new Response(null, { status: 302, headers: { 'Location': '/home?offlineSaved=true' } });
+      })
+    );
+    return;
+  }
 
-  const isNavigation = request.mode === 'navigate' ||
-    (request.method === 'GET' && request.headers.get('accept') && request.headers.get('accept').includes('text/html'));
+  // 🛡️ Strategia Network-First per HTML, Cache-First per il resto
+  const isHTML = request.mode === 'navigate' || request.headers.get('accept')?.includes('text/html');
 
-  if (isNavigation) {
+  if (isHTML) {
     event.respondWith(
       fetch(request)
         .then(response => {
-          if (response.status === 200) {
-            const responseClone = response.clone();
-            caches.open(CACHE_NAME).then(cache => cache.put(request, responseClone));
+          if (response.ok) {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
           }
           return response;
         })
-        .catch(() => {
-          // Fallback alla cache se offline - gestisce params per la pagina scan
-          return caches.match(request, { ignoreSearch: url.pathname.includes('/scan') })
-            .then(cached => cached || new Response('Contenuto non disponibile offline', {
-              status: 503,
-              statusText: 'Offline'
-            }));
+        .catch(async () => {
+          const matched = await caches.match(request) ||
+            await caches.match(request, { ignoreSearch: true }) ||
+            await caches.match('/home') ||
+            await caches.match('/');
+          return matched || new Response('Contenuto non disponibile offline', { status: 503 });
         })
     );
   } else {
-    // Assets statici: Cache-First
     event.respondWith(
       caches.match(request).then(cached => {
         return cached || fetch(request).then(response => {
-          if (response.status === 200) {
-            const responseClone = response.clone();
-            caches.open(CACHE_NAME).then(cache => cache.put(request, responseClone));
+          if (response.ok || response.type === 'opaque') {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
           }
           return response;
+        }).catch(() => {
+          // Se l'asset non è in cache e siamo offline
+          if (url.pathname.includes('/css/') || url.pathname.includes('/js/')) {
+            return new Response('', { status: 404 });
+          }
+          return null; // lascia che il browser gestisca l'errore se non è un asset critico
         });
       })
     );
   }
 });
 
-
-// 🎯 Sync: invia le scansioni salvate quando torna la connessione
+// 🎯 Sync
 self.addEventListener('sync', event => {
-  if (event.tag === 'sync-scans') {
-    event.waitUntil(syncOfflineScans());
-  }
+  if (event.tag === 'sync-scans') event.waitUntil(syncOfflineScans());
 });
 
 async function syncOfflineScans() {
@@ -141,18 +142,16 @@ async function syncOfflineScans() {
   const scans = await db.getAll(STORE_NAME);
   for (const scan of scans) {
     try {
-      // Rimuoviamo l'id per evitare conflitti lato server se presente
       const { id, ...scanData } = scan;
-      const response = await fetch('/scan', {
+      const res = await fetch('/scan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(scanData)
       });
-      if (response.ok) {
-        await db.delete(STORE_NAME, scan.id);
-      }
+      if (res.ok) await db.delete(STORE_NAME, scan.id);
     } catch (err) {
-      console.error('Errore durante la sincronizzazione della scansione:', err);
+      console.error('Errore sincronizzazione:', err);
     }
   }
 }
+

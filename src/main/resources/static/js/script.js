@@ -36,6 +36,25 @@ document.addEventListener('DOMContentLoaded', function () {
         localStorage.setItem(storageKey, usernameInput.value);
       }
     });
+
+    // Supporto tasto Enter su tutti i campi del form di login
+    const loginForm = usernameInput.closest('form');
+    if (loginForm) {
+      const inputs = loginForm.querySelectorAll('input');
+      inputs.forEach(input => {
+        input.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') {
+            e.preventDefault(); // Previene comportamenti duplicati
+            const submitBtn = loginForm.querySelector('button[type="submit"]');
+            if (submitBtn) {
+              submitBtn.click(); // Simula il click reale sul pulsante
+            } else {
+              loginForm.submit(); // Fallback se il pulsante non viene trovato
+            }
+          }
+        });
+      });
+    }
   }
 });
 
@@ -108,10 +127,51 @@ window.openDeleteModal = function (button) {
 
 // Service Worker + Sync per invio dati offline
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js')
-    .then(() => console.log('✅ Service Worker registrato'))
-    .catch(console.error);
+  window.addEventListener('load', () => {
+    const swStatus = document.getElementById('sw-status');
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => {
+        console.log('✅ Service Worker registrato');
+
+        // Funzione per aggiornare il badge di stato
+        const updateStatus = (worker) => {
+          if (!swStatus) return;
+          if (worker.state === 'activated') {
+            swStatus.className = 'badge rounded-pill bg-success me-2';
+            swStatus.textContent = 'App Offline Pronta';
+          } else {
+            swStatus.className = 'badge rounded-pill bg-warning text-dark me-2';
+            swStatus.textContent = 'SW: ' + worker.state;
+          }
+        };
+
+        if (reg.active) updateStatus(reg.active);
+
+        reg.onupdatefound = () => {
+          const installingWorker = reg.installing;
+          installingWorker.onstatechange = () => {
+            updateStatus(installingWorker);
+            if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              console.log('Nuovo Service Worker disponibile, ricarica...');
+              window.location.reload();
+            }
+          };
+        };
+      })
+      .catch(err => {
+        if (swStatus) {
+          swStatus.className = 'badge rounded-pill bg-danger me-2';
+          swStatus.textContent = 'Errore SW: ' + err.message.substring(0, 20);
+        }
+        console.error('Service Worker Error:', err);
+      });
+  });
 }
+
+// Gestione indicatore visuale offline
+window.addEventListener('online', () => document.getElementById('offline-status-alert')?.classList.add('d-none'));
+window.addEventListener('offline', () => document.getElementById('offline-status-alert')?.classList.remove('d-none'));
+if (!navigator.onLine) document.getElementById('offline-status-alert')?.classList.remove('d-none');
 
 // Gestione form scan offline (solo se necessario JS fallback)
 document.addEventListener('DOMContentLoaded', () => {
