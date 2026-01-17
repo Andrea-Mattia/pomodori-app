@@ -1,6 +1,6 @@
-INSERT INTO tipo_ruolo (codice, descrizione) VALUES('1', 'Gancio');
-INSERT INTO tipo_ruolo (codice, descrizione) VALUES('2', 'Gira teste');
-INSERT INTO tipo_ruolo (codice, descrizione) VALUES('3', 'Sfogliatura');
-INSERT INTO tipo_ruolo (codice, descrizione) VALUES('4', 'Femminelle');
-INSERT INTO tipo_ruolo (codice, descrizione) VALUES('5', 'Fiori');
-INSERT INTO tipo_ruolo (codice, descrizione) VALUES('6', 'Raccolta');
+MERGE INTO tipo_ruolo KEY (codice) VALUES('1', 'Gancio');
+MERGE INTO tipo_ruolo KEY (codice) VALUES('2', 'Gira teste');
+MERGE INTO tipo_ruolo KEY (codice) VALUES('3', 'Sfogliatura');
+MERGE INTO tipo_ruolo KEY (codice) VALUES('4', 'Femminelle');
+MERGE INTO tipo_ruolo KEY (codice) VALUES('5', 'Fiori');
+MERGE INTO tipo_ruolo KEY (codice) VALUES('6', 'Raccolta');

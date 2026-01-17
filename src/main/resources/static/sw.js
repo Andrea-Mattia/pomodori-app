@@ -1,5 +1,5 @@
-// Usiamo la versione specifica per evitare redirect (che Safari blocca nei Service Worker)
-importScripts('https://cdn.jsdelivr.net/npm/idb@7.1.1/build/iife/index-min.js');
+// Proviamo Cloudflare che solitamente non fa redirect aggressivi
+importScripts('https://cdnjs.cloudflare.com/ajax/libs/idb/7.1.1/index.min.js');
 
 const CACHE_NAME = 'pomodori-cache-v11';
 const STORE_NAME = 'offline-scans';
@@ -48,14 +48,17 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-// Setup IndexedDB per richieste offline
-const dbPromise = idb.openDB('pomodori-db', 1, {
-  upgrade(db) {
-    if (!db.objectStoreNames.contains(STORE_NAME)) {
-      db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+// Setup IndexedDB per richieste offline - con controllo per evitare il crash
+let dbPromise = null;
+if (typeof idb !== 'undefined') {
+  dbPromise = idb.openDB('pomodori-db', 1, {
+    upgrade(db) {
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+      }
     }
-  }
-});
+  });
+}
 
 // Intercetta fetch
 self.addEventListener('fetch', event => {
@@ -84,8 +87,11 @@ self.addEventListener('fetch', event => {
         const json = {};
         for (const [key, value] of formData.entries()) json[key] = value;
         const db = await dbPromise;
-        await db.add(STORE_NAME, json);
-        return new Response(null, { status: 302, headers: { 'Location': '/home?offlineSaved=true' } });
+        if (db) {
+          await db.add(STORE_NAME, json);
+          return new Response(null, { status: 302, headers: { 'Location': '/home?offlineSaved=true' } });
+        }
+        return new Response('Database Offline non disponibile', { status: 503 });
       })
     );
     return;
@@ -140,6 +146,7 @@ self.addEventListener('sync', event => {
 
 async function syncOfflineScans() {
   const db = await dbPromise;
+  if (!db) return;
   const scans = await db.getAll(STORE_NAME);
   for (const scan of scans) {
     try {
