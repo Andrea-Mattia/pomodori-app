@@ -5,7 +5,7 @@ spring:
     url: ${DB_URL}
     username: ${DB_USER}
     password: ${DB_PASS}
-    driver-class-name: oracle.jdbc.OracleDriver #org.postgresql.Driver
+    driver-class-name: ${DB_DRIVER:oracle.jdbc.OracleDriver}
   sql:
     init:
       mode: never
@@ -27,13 +27,13 @@ spring:
       ddl-auto: update
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.Oracle12cDialect #org.hibernate.dialect.PostgreSQLDialect
+        dialect: ${DB_DIALECT:org.hibernate.dialect.Oracle12cDialect}
         format_sql: false
         # next 3 params used to log hibernate query and values
         show_sql: false
         use_sql_comments: true
         type: trace
-        default_schema: ${DB_USER}
+        default_schema: ${DB_SCHEMA:${DB_USER}}
 
 report:
   schedule:

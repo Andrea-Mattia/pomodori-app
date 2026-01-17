@@ -8,10 +8,17 @@ services:
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: render-h2
+      - key: DB_URL
+        value: jdbc:h2:file:./pomodoridb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;AUTO_SERVER=TRUE
+      - key: DB_USER
+        value: sa
+      - key: DB_PASS
+        value: password
+      - key: DB_SCHEMA
+        value: PUBLIC
+      - key: DB_DRIVER
+        value: org.h2.Driver
+      - key: DB_DIALECT
+        value: org.hibernate.dialect.H2Dialect
       - key: JAVA_OPTS
         value: "-Xmx512m"
-
-databases:
-  - name: pomodori-db
-    plan: free
-    region: frankfurt
