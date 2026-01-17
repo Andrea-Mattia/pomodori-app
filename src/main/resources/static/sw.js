@@ -1,4 +1,5 @@
-importScripts('https://unpkg.com/idb@7/build/iife/index-min.js');
+// Usiamo la versione specifica per evitare redirect (che Safari blocca nei Service Worker)
+importScripts('https://cdn.jsdelivr.net/npm/idb@7.1.1/build/iife/index-min.js');
 
 const CACHE_NAME = 'pomodori-cache-v11';
 const STORE_NAME = 'offline-scans';
