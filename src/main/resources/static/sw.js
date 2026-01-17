@@ -1,7 +1,7 @@
-// Proviamo Cloudflare che solitamente non fa redirect aggressivi
-importScripts('https://cdnjs.cloudflare.com/ajax/libs/idb/7.1.1/index.min.js');
+// v12 - Local library import for Safari compatibility
+importScripts('/js/libs/idb.min.js');
 
-const CACHE_NAME = 'pomodori-cache-v11';
+const CACHE_NAME = 'pomodori-cache-v12';
 const STORE_NAME = 'offline-scans';
 
 // ⚙️ Lista delle risorse da precaricare (cache statica) - Usiamo solo URL locali per ora
