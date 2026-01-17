@@ -1,8 +1,9 @@
-// v12 - Local library import for Safari compatibility
+// v13 - Local library import for Safari compatibility
 importScripts('/js/libs/idb.min.js');
 
-const CACHE_NAME = 'pomodori-cache-v12';
+const CACHE_NAME = 'pomodori-cache-v13';
 const STORE_NAME = 'offline-scans';
+const LOGOUT_URLS = ['/logout', '/custom-logout', '/dipendente/logout'];
 
 // ⚙️ Lista delle risorse da precaricare (cache statica) - Usiamo solo URL locali per ora
 const PRECACHE_URLS = [
