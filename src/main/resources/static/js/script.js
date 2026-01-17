@@ -169,34 +169,16 @@ if ('serviceWorker' in navigator) {
 }
 
 // Gestione indicatore visuale offline
-window.addEventListener('online', () => document.getElementById('offline-status-alert')?.classList.add('d-none'));
+window.addEventListener('online', () => {
+  document.getElementById('offline-status-alert')?.classList.add('d-none');
+  // Forza sincronizzazione manuale quando torna online (utile per iOS)
+  if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.controller.postMessage('sync-now');
+  }
+});
 window.addEventListener('offline', () => document.getElementById('offline-status-alert')?.classList.remove('d-none'));
 if (!navigator.onLine) document.getElementById('offline-status-alert')?.classList.remove('d-none');
 
-// Gestione form scan offline (solo se necessario JS fallback)
-document.addEventListener('DOMContentLoaded', () => {
-  const form = document.querySelector('form[action="/scan"]');
-  if (form && navigator.onLine === false) {
-    form.addEventListener('submit', e => {
-      e.preventDefault();
+// La gestione del form offline è ora affidata interamente al Service Worker (sw.js)
+// Questo garantisce compatibilità massima sia con Chrome che con Safari/iOS.
 
-      const formData = new FormData(form);
-      const scan = {};
-      for (const [key, value] of formData.entries()) {
-        scan[key] = value;
-      }
-
-      // Salva in IndexedDB
-      if (window.indexedDB && 'serviceWorker' in navigator && 'SyncManager' in window) {
-        navigator.serviceWorker.ready.then(reg => {
-          return reg.sync.register('sync-scans');
-        });
-
-        form.reset();
-        window.location.href = '/home?offlineSaved';
-      } else {
-        alert("Offline e salvataggio automatico non supportato.");
-      }
-    });
-  }
-});

@@ -1,7 +1,7 @@
 // v13 - Local library import for Safari compatibility
 importScripts('/js/libs/idb.min.js');
 
-const CACHE_NAME = 'pomodori-cache-v13';
+const CACHE_NAME = 'pomodori-cache-v14';
 const STORE_NAME = 'offline-scans';
 const LOGOUT_URLS = ['/logout', '/custom-logout', '/dipendente/logout'];
 
@@ -39,12 +39,15 @@ self.addEventListener('install', event => {
   );
 });
 
-// Activate: pulizia vecchie cache
+// Activate: pulizia vecchie cache e tentativo sync
 self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(keys => Promise.all(
-      keys.map(key => key !== CACHE_NAME ? caches.delete(key) : null)
-    ))
+    Promise.all([
+      caches.keys().then(keys => Promise.all(
+        keys.map(key => key !== CACHE_NAME ? caches.delete(key) : null)
+      )),
+      syncOfflineScans() // Prova sincronizzazione all'attivazione
+    ])
   );
   self.clients.claim();
 });
@@ -142,6 +145,13 @@ self.addEventListener('fetch', event => {
 
 // 🎯 Sync
 self.addEventListener('sync', event => {
+  // Listener per messaggi manuali (per iOS/Safari)
+  self.addEventListener('message', event => {
+    if (event.data === 'sync-now') {
+      event.waitUntil(syncOfflineScans());
+    }
+  });
+
   if (event.tag === 'sync-scans') event.waitUntil(syncOfflineScans());
 });
 
