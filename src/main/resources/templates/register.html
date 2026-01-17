@@ -1,46 +1,50 @@
 <!DOCTYPE html>
 <html lang="it" xmlns:th="http://www.thymeleaf.org">
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Registrazione Admin</title>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-	<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+	<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
 	<link rel="manifest" href="/manifest.json">
 	<meta name="theme-color" content="#0d6efd">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="default">
+	<meta name="apple-mobile-web-app-title" content="Pomodori">
+	<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 </head>
+
 <body class="container py-5">
 	<div class="mobile-container max-width-mobile">
 		<h2>Registrazione Admin</h2>
 
-		<form th:action="@{/register}" th:object="${adminDto}" method="post"
-			novalidate>
+		<form th:action="@{/register}" th:object="${adminDto}" method="post" novalidate>
 			<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 			<div class="mb-3">
-				<label for="username" class="form-label">Username</label> <input required
-					th:field="*{username}" class="form-control"
-					th:classappend="${#fields.hasErrors('username')}? 'is-invalid'" autocomplete="username">
+				<label for="username" class="form-label">Username</label> <input required th:field="*{username}"
+					class="form-control" th:classappend="${#fields.hasErrors('username')}? 'is-invalid'"
+					autocomplete="username">
 				<div class="invalid-feedback" th:errors="*{username}"></div>
 			</div>
 
 			<div class="mb-3">
-				<label for="email" class="form-label">Email</label> <input required
-					th:field="*{email}" type="email" class="form-control"
-					th:classappend="${#fields.hasErrors('email')}? 'is-invalid'">
+				<label for="email" class="form-label">Email</label> <input required th:field="*{email}" type="email"
+					class="form-control" th:classappend="${#fields.hasErrors('email')}? 'is-invalid'">
 				<div class="invalid-feedback" th:errors="*{email}"></div>
 			</div>
 
 			<div class="mb-3">
-				<label for="password" class="form-label">Password</label> <input required
-					th:field="*{password}" type="password" class="form-control"
-					th:classappend="${#fields.hasErrors('password')}? 'is-invalid'" autocomplete="new-password">
+				<label for="password" class="form-label">Password</label> <input required th:field="*{password}"
+					type="password" class="form-control" th:classappend="${#fields.hasErrors('password')}? 'is-invalid'"
+					autocomplete="new-password">
 				<div class="invalid-feedback" th:errors="*{password}"></div>
 			</div>
 
 			<div class="mb-3">
 				<label for="confirmPassword" class="form-label">Conferma
-					Password</label> <input th:field="*{confirmPassword}" type="password"
-					class="form-control"
+					Password</label> <input th:field="*{confirmPassword}" type="password" class="form-control"
 					th:classappend="${#fields.hasErrors('confirmPassword')}? 'is-invalid'" autocomplete="new-password">
 				<div class="invalid-feedback" th:errors="*{confirmPassword}"></div>
 			</div>
@@ -50,4 +54,5 @@
 	</div>
 	<script th:src="@{/js/script.js}"></script>
 </body>
+
 </html>
