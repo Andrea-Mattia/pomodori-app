@@ -2,6 +2,10 @@
 
 Seguire rigorosamente queste linee guida durante lo sviluppo di questo progetto:
 
+## 0. Memoria e Stato del Progetto
+- **GitHub Issues**: All'inizio di ogni sessione o quando si riprende il lavoro, **leggere sempre** la issue contrassegnata come `[ROADMAP]` per comprendere lo stato attuale, le decisioni tecniche prese e i task pendenti.
+- **Aggiornamento**: Al termine di modifiche significative o della sessione, aggiornare la issue `[ROADMAP]` per riflettere i progressi fatti.
+
 ## 1. Workflow Modifiche e Git
 - **Analisi**: Prima di ogni modifica, analizzare i file coinvolti e spiegare l'approccio.
 - **Esecuzione Locale**: Applicare le modifiche ai file nel workspace.
